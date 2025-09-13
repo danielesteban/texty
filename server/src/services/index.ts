@@ -28,16 +28,40 @@ export default (app: Application) => {
     User.register
   );
 
-  app.get(
+  app.post(
     '/scenario',
+    preventCache,
+    requireAuth(Scenario.create)
+  );
+
+  app.get(
+    '/scenario/:id',
     preventCache,
     Scenario.load
   );
 
   app.put(
-    '/scenario',
+    '/scenario/:id',
     preventCache,
     upload.single('data'),
     requireAuth(Scenario.save)
+  );
+
+  app.delete(
+    '/scenario/:id',
+    preventCache,
+    requireAuth(Scenario.remove)
+  );
+
+  app.get(
+    '/scenarios',
+    preventCache,
+    Scenario.list
+  );
+
+  app.get(
+    '/scenario/:id/photo',
+    preventCache,
+    Scenario.photo
   );
 };

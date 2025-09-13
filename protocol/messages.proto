@@ -44,4 +44,5 @@ enum ResolutionStatus {
   BLOCKED = 0;
   DATE = 1;
   FRIENDZONED = 2;
+  REJECTED = 3;
 }

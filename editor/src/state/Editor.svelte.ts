@@ -9,6 +9,8 @@ let camera = $state({ x: 0, y: 0 });
 
 let hasLoaded = $state(false);
 
+let id = $state<string>('');
+
 let nodes = $state<Node[]>([]);
 
 let wire = $state<{
@@ -18,18 +20,6 @@ let wire = $state<{
   ready: boolean;
 } | null>(null);
 
-request({
-  endpoint: 'scenario',
-})
-  .then((data) => {
-    const scenario = Scenario.toObject(Scenario.decode(new Uint8Array(data))) as IScenario;
-    nodes = scenario.nodes!;
-    hasLoaded = true;
-  })
-  .catch(() => {
-    console.error('error loading!');
-  });
-
 export const Editor = {
   get addingNode() { return addingNode },
   set addingNode(value) { addingNode = value },
@@ -38,21 +28,62 @@ export const Editor = {
   get nodes() { return nodes },
   get wire() { return wire },
   set wire(value) { wire = value },
-  save() {
+  async create() {
+    const scenario = await request({
+      method: 'POST',
+      endpoint: `scenario`,
+      session: User.session!,
+    });
+    return await this.load(scenario);
+  },
+  async load(scenario: string) {
+    this.unload();
+    return await request({
+      endpoint: `scenario/${scenario}`,
+    })
+      .then((data) => {
+        id = scenario;
+        nodes = (Scenario.toObject(Scenario.decode(new Uint8Array(data))) as IScenario).nodes!;
+        hasLoaded = true;
+      });
+  },
+  async save() {
     const data = new FormData();
     // @ts-ignore
     data.append('data', new Blob([Scenario.encode({ nodes }).finish()]));
-    request({
+    return await request({
       body: data,
-      endpoint: 'scenario',
+      endpoint: `scenario/${id}`,
       method: 'PUT',
       session: User.session!,
-    })
-      .then(() => {
-        console.log('saved!')
-      })
-      .catch(() => {
-        console.error('error saving!');
-      });
+    });
   },
+  async remove() {
+    await request({
+      endpoint: `scenario/${id}`,
+      method: 'DELETE',
+      session: User.session!,
+    });
+    location.hash = '/';
+  },
+  async list() {
+    const scenarios = await request({
+      endpoint: `scenarios`,
+    });
+    return scenarios;
+  },
+  unload() {
+    addingNode = null;
+    camera = { x: 0, y: 0 };
+    hasLoaded = false;
+    id = '';
+    nodes = [];
+    wire = null;
+  },
+};
+
+// @dani @hack
+// This is here to use it through the console until I make a UI for it
+(window as any).removeCurrentScenario = () => {
+  Editor.remove();
 };

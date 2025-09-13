@@ -32,9 +32,6 @@
   let timer: NodeJS.Timeout;
   let lastSave = '';
   $effect(() => {
-    if (!Editor.hasLoaded) {
-      return;
-    }
     const current = JSON.stringify(Editor.nodes);
     if (!lastSave) {
       lastSave = current;

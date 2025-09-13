@@ -1,11 +1,33 @@
 <script lang="ts">
+  import { Game as GameState } from 'state/Game.svelte';
   import Game from 'views/Game.svelte';
+  import Menu from 'views/Menu.svelte';
   import iPhone from '../iphone.png';
+
+  const router = () => {
+    const [route] = location.hash.slice(2).split('/');
+    if (route === '') {
+      GameState.unload();
+      return; 
+    }
+    if (route.length === 24) {
+      GameState.load(route);
+      return;
+    }
+    location.hash = '/';
+  };
+
+  window.addEventListener('hashchange', router);
+  router();
 </script>
 
 <div class="app">
   <div class="phone" style="--background-image: url({iPhone})">
-    <Game />
+    {#if GameState.hasLoaded}
+      <Game />
+    {:else}
+      <Menu />
+    {/if}
   </div>
 </div>
 
@@ -24,13 +46,13 @@
 
   @media (min-width: 700px) {
     .phone {
-      width: 360px;
+      width: 370px;
       height: 640px;
       background-image: var(--background-image);
       background-size: cover;
       background-repeat: no-repeat;
       background-position: center center;
-      padding: 8rem 4rem 8rem 5rem;
+      padding: 8rem 4rem 8rem 5.5rem;
     }
   }
 </style>

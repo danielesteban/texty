@@ -47,7 +47,7 @@
     Editor.wire!.position.x = initialPosition.x + movement.x;
     Editor.wire!.position.y = initialPosition.y + movement.y;
     output = outputs.find(({ position }) => (
-      Math.sqrt((position.x - Editor.wire!.position.x) ** 2 + (position.y - Editor.wire!.position.y) ** 2) < 16
+      ((position.x - Editor.wire!.position.x) ** 2 + (position.y - Editor.wire!.position.y) ** 2) < 256
     )) || null;
     if (output) {
       Editor.wire!.position.x = output.position.x;
@@ -109,6 +109,7 @@
         <option value={ResolutionStatus.BLOCKED}>{Lang.current.blocked}</option>
         <option value={ResolutionStatus.DATE}>{Lang.current.date}</option>
         <option value={ResolutionStatus.FRIENDZONED}>{Lang.current.friendzoned}</option>
+        <option value={ResolutionStatus.REJECTED}>{Lang.current.rejected}</option>
       </select>
     </div>
   {/if}
