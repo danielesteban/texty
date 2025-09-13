@@ -13,7 +13,7 @@ export const create = [
     const scenario = new Scenario({
       name: 'New Scenario',
       description: '',
-      nodes: Protocol.encode(new Protocol({
+      nodes: Buffer.from(Protocol.encode(new Protocol({
         nodes: [
           {
             id: 'scenario',
@@ -21,7 +21,7 @@ export const create = [
             scenario: {},
           },
         ],
-      })).finish(),
+      })).finish()),
       photo: defaultPhoto,
     });
     scenario
@@ -83,7 +83,7 @@ export const save = [
         $set: {
           name,
           description,
-          nodes: Protocol.encode(data).finish(),
+          nodes: Buffer.from(Protocol.encode(data).finish()),
           photo,
         },
       })

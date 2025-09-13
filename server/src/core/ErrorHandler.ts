@@ -24,8 +24,8 @@ export default (app: Application) => {
     if (!res.headersSent) {
       res.status(output.statusCode).end();
     }
-    // if (output.statusCode === 500 && process.env.NODE_ENV === 'development') {
+    if (output.statusCode === 500 && process.env.NODE_ENV === 'development') {
       console.error(err);
-    // }
+    }
   });
 };
