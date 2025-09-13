@@ -136,17 +136,17 @@ build-server-image:
     reports:
       dotenv: server.env
 
-# deploy:
-#   stage: deploy
-#   image: curlimages/curl:latest
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-#       when: always
-#   environment:
-#     name: production
-#     url: https://fms.gatunes.com
-#   variables:
-#     GIT_STRATEGY: none
-#   script:
-#     - curl -f -s "https://gatunes.com/deployer/?token=${DEPLOY_TOKEN}&client=${GAME_JOB_ID}&server=${SERVER_JOB_ID}"
-#     - curl -f -s "https://gatunes.com/deployer/?token=${EDITOR_DEPLOY_TOKEN}&client=${EDITOR_JOB_ID}"
+deploy:
+  stage: deploy
+  image: curlimages/curl:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+  environment:
+    name: production
+    url: https://fms.gatunes.com
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - curl -f -s "https://gatunes.com/deployer/?token=${DEPLOY_TOKEN}&client=${GAME_JOB_ID}&server=${SERVER_JOB_ID}"
+    - curl -f -s "https://gatunes.com/deployer/?token=${EDITOR_DEPLOY_TOKEN}&client=${EDITOR_JOB_ID}"
