@@ -34,7 +34,7 @@ export const Editor = {
       endpoint: `scenario`,
       session: User.session!,
     });
-    return await this.load(scenario);
+    location.hash = `/${scenario}`;
   },
   async load(scenario: string) {
     this.unload();
