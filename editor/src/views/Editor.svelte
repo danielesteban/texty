@@ -28,11 +28,21 @@
 
   const prevent = (e: Event) => e.preventDefault();
 
+  // @dani @hack Figure out a better way to do this shit
   let timer: NodeJS.Timeout;
-  $inspect(Editor.nodes).with((type) => {
-    if (type !== 'update' || !Editor.hasLoaded) {
+  let lastSave = '';
+  $effect(() => {
+    if (!Editor.hasLoaded) {
       return;
     }
+    const current = JSON.stringify(Editor.nodes);
+    if (!lastSave) {
+      lastSave = current;
+    }
+    if (lastSave === current) {
+      return;
+    }
+    console.log('save');
     clearTimeout(timer);
     timer = setTimeout(() => {
       Editor.save();
