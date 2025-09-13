@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+message NodeMessageResponses {
+  string text = 1;
+  optional string next = 2;
+}
+
+message NodeMessage {
+  string text = 1;
+  repeated NodeMessageResponses responses = 2;
+}
+
+message NodeResolution {
+  ResolutionStatus status = 1;
+}
+
+message NodeScenario {
+  string description = 1;
+  string name = 2;
+  bytes photo = 3;
+  optional string start = 4;
+}
+
+message NodePosition {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message Node {
+  string id = 1;
+  NodePosition position = 2;
+  oneof type {
+    NodeMessage message = 3;
+    NodeResolution resolution = 4;
+    NodeScenario scenario = 5;
+  }
+}
+
+message Scenario {
+  repeated Node nodes = 1;
+}
+
+enum ResolutionStatus {
+  BLOCKED = 0;
+  DATE = 1;
+  FRIENDZONED = 2;
+}

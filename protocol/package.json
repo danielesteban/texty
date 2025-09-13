@@ -1,0 +1,19 @@
+{
+  "name": "fms-protocol",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pbjs -t static-module -w ./protobuf.wrapper.js --dependency protobufjs/minimal.js --es6 ./messages.proto -o ./messages.js && pbts -o ./messages.d.ts ./messages.js"
+  },
+  "dependencies": {
+    "protobufjs": "^7.5.4"
+  },
+  "devDependencies": {
+    "protobufjs-cli": "^1.1.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "protobufjs"
+    ]
+  }
+}

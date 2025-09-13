@@ -1,0 +1,152 @@
+stages:
+  - build-source
+  - build-images
+  - deploy
+
+build-editor:
+  stage: build-source
+  image: node:jod
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+  cache:
+    - key:
+        files:
+          - editor/pnpm-lock.yaml
+      paths:
+        - editor/.pnpm-store
+  variables:
+    SERVER: https://fms.gatunes.com/server/
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@latest-10 --activate
+    - pnpm -C editor config set store-dir .pnpm-store
+  script:
+    - pnpm -C protocol install
+    - pnpm -C protocol build
+    - pnpm -C editor install
+    - pnpm -C editor build
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - editor/dist
+
+build-game:
+  stage: build-source
+  image: node:jod
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+  cache:
+    - key:
+        files:
+          - game/pnpm-lock.yaml
+      paths:
+        - game/.pnpm-store
+  variables:
+    SERVER: https://fms.gatunes.com/server/
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@latest-10 --activate
+    - pnpm -C game config set store-dir .pnpm-store
+  script:
+    - pnpm -C protocol install
+    - pnpm -C protocol build
+    - pnpm -C game install
+    - pnpm -C game build
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - game/dist
+
+build-server:
+  stage: build-source
+  image: node:jod
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+  cache:
+    - key:
+        files:
+          - server/pnpm-lock.yaml
+      paths:
+        - server/.pnpm-store
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@latest-10 --activate
+    - pnpm -C server config set store-dir .pnpm-store
+  script:
+    - pnpm -C protocol install
+    - pnpm -C protocol build
+    - pnpm -C server install
+    - pnpm -C server build
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - server/dist
+
+build-editor-image:
+  stage: build-images
+  image: docker:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --pull -t $CI_REGISTRY_IMAGE/editor:${CI_JOB_ID} editor
+    - docker push $CI_REGISTRY_IMAGE/editor:${CI_JOB_ID}
+    - echo EDITOR_JOB_ID=${CI_JOB_ID} > editor.env
+  artifacts:
+    expire_in: 1 hour
+    reports:
+      dotenv: editor.env
+
+build-game-image:
+  stage: build-images
+  image: docker:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --pull -t $CI_REGISTRY_IMAGE/game:${CI_JOB_ID} game
+    - docker push $CI_REGISTRY_IMAGE/game:${CI_JOB_ID}
+    - echo GAME_JOB_ID=${CI_JOB_ID} > game.env
+  artifacts:
+    expire_in: 1 hour
+    reports:
+      dotenv: game.env
+
+build-server-image:
+  stage: build-images
+  image: docker:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --pull -t $CI_REGISTRY_IMAGE/server:${CI_JOB_ID} server
+    - docker push $CI_REGISTRY_IMAGE/server:${CI_JOB_ID}
+    - echo SERVER_JOB_ID=${CI_JOB_ID} > server.env
+  artifacts:
+    expire_in: 1 hour
+    reports:
+      dotenv: server.env
+
+# deploy:
+#   stage: deploy
+#   image: curlimages/curl:latest
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#       when: always
+#   environment:
+#     name: production
+#     url: https://fms.gatunes.com
+#   variables:
+#     GIT_STRATEGY: none
+#   script:
+#     - curl -f -s "https://gatunes.com/deployer/?token=${DEPLOY_TOKEN}&client=${GAME_JOB_ID}&server=${SERVER_JOB_ID}"
+#     - curl -f -s "https://gatunes.com/deployer/?token=${EDITOR_DEPLOY_TOKEN}&client=${EDITOR_JOB_ID}"

@@ -1,0 +1,22 @@
+{
+  "name": "fms",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "start": "vite"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.0",
+    "@types/node": "^24.3.2",
+    "svelte": "^5.38.10",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "protobufjs"
+    ]
+  }
+}
