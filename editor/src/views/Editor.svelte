@@ -75,6 +75,10 @@
 <style>
   .editor {
     height: 100%;
+    background-size: 48px 48px;
+    background-image:
+      linear-gradient(to right, #222 1px, transparent 1px),
+      linear-gradient(to bottom, #222 1px, transparent 1px);
   }
 
   .viewport {
