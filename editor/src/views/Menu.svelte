@@ -46,6 +46,7 @@
 
   .menu {
     background: #111;
+    border: 1px solid #000;
     border-radius: 0.5rem;
     display: grid;
     grid-template-rows: auto 1fr auto;
