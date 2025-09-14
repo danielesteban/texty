@@ -76,19 +76,25 @@
       </a>
     </div>
   {:else if Game.responses.length}
-    <div class="responses">
-      {#each Game.responses as response}
-        {#if response.text && response.next}
-          <div class="response">
-            <button
-              disabled={Game.isTyping}
-              onclick={() => Game.respond(response)}
-            >
-              <Text value={response.text} />
-            </button>
-          </div>
-        {/if}
-      {/each}
+    <div class="chat">
+      <div class="responses">
+        {#each Game.responses as response, i}
+          {#if response.text && response.next}
+            <label class="response" class:disabled={Game.isTyping} class:selected={Game.selected === i}>
+              <input name="response" type="radio" value={i} bind:group={Game.selected} disabled={Game.isTyping} />
+              <div>
+                <Text value={response.text} />
+              </div>
+            </label>
+          {/if}
+        {/each}
+      </div>
+      <!-- svelte-ignore a11y_consider_explicit_label -->
+      <button class="send" onclick={() => Game.respond(Game.responses[Game.selected])} disabled={Game.isTyping || Game.selected === -1}>
+        <svg width="1.5rem" height="1.5rem" viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M44.9,23.2l-38-18L6,5A2,2,0,0,0,4,7L9.3,23H24a2.1,2.1,0,0,1,2,2,2,2,0,0,1-2,2H9.3L4,43a2,2,0,0,0,2,2l.9-.2,38-18A2,2,0,0,0,44.9,23.2Z"/>
+        </svg>
+      </button>
     </div>
   {/if}
 </div>
@@ -219,21 +225,50 @@
     padding: 0.5rem 0;
   }
 
-  .responses {
+  .chat {
     display: grid;
-    padding: 1rem;
-    gap: 0.5rem;
+    grid-template-columns: 1fr auto;
     background: #242626;
     border-top: 1px solid #000;
+  }
+
+  .responses {
+    display: grid;
+    border-right: 1px solid #000;
   }
   
   .response {
     display: grid;
+    grid-template-columns: auto 1fr;
+    padding: 0.75rem 1rem;
+    gap: 0.75rem;
+    color: #eee;
+    border-top: 1px solid #000;
+    cursor: pointer;
   }
 
-  .response > button {
-    flex-direction: column;
-    align-items: flex-start;
+  .response.disabled {
+    color: #666;
+  }
+
+  .response.selected {
+    color: #21c063;
+  }
+
+  .response:first-child {
+    border-top: none;
+  }
+
+  .response > div {
+    display: grid;
+    align-items: center;
+  }
+
+  .send {
+    padding: 0 1.5rem;
+    background: #21c063;
+    border: 0;
+    border-radius: 0;
   }
 
   .options {

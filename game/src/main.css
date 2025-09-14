@@ -57,9 +57,13 @@ canvas {
   vertical-align: middle;
 }
 
-input[type="checkbox"], input[type="range"] {
-  accent-color: #393;
+input[type="checkbox"], input[type="radio"], input[type="range"] {
+  accent-color: #21c063;
   cursor: pointer;
+}
+
+input[type="checkbox"], input[type="radio"] {
+  margin: 0;
 }
 
 input[type="number"], input[type="text"], input[type="password"], select, textarea {

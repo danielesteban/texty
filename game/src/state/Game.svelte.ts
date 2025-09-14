@@ -7,9 +7,10 @@ let isTyping = $state(false);
 
 let nodes = $state<Node[]>([]);
 let messages = $state<{ text: string; type: 'incoming' | 'outgoing' }[]>([]);
-let scenario = $state<Node>({});
 let resolution = $state<ResolutionStatus | null>(null);
 let responses = $state<INodeMessageResponses[]>([]);
+let scenario = $state<Node>({});
+let selected = $state(-1);
 
 let typingTimer = $state<NodeJS.Timeout>();
 
@@ -25,6 +26,7 @@ const typeMessage = (text: string) => {
 };
 
 const loadNode = async (id: string) => {
+  selected = -1;
   const node = nodes.find((node) => node.id === id)!!;
   if (node.message) {
     await typeMessage(node.message.text!);
@@ -45,9 +47,11 @@ export const Game = {
   get hasLoaded() { return hasLoaded },
   get isTyping() { return isTyping },
   get messages() { return messages },
-  get scenario() { return scenario },
   get resolution() { return resolution },
   get responses() { return responses },
+  get scenario() { return scenario },
+  get selected() { return selected },
+  set selected(value) { selected = value; },
   async load(id: string) {
     const res = await fetch(`${__SERVER__}scenario/${id}`);
     if (!res.ok) {
@@ -74,9 +78,10 @@ export const Game = {
     isTyping = false;
     nodes = [];
     messages = [];
-    scenario = {};
     resolution = null;
     responses = [];
+    scenario = {};
+    selected = -1;
     clearTimeout(typingTimer);
   },
 };
