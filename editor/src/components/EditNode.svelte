@@ -28,4 +28,3 @@
     {Lang.current.remove}
   </button>
 </ContextMenu>
-
