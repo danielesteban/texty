@@ -11,7 +11,8 @@
       return; 
     }
     if (route.length === 24) {
-      GameState.load(route);
+      GameState.load(route)
+        .catch(() => { location.hash = '/'; });
       return;
     }
     location.hash = '/';
