@@ -20,8 +20,8 @@ const typeMessage = (text: string) => {
   return new Promise<void>((resolve) => {
     typingTimer = setTimeout(() => {
       messages.push({ text, type: 'incoming' });
-      Audio.play('message');
       isTyping = false;
+      Audio.play('message');
       resolve();
     }, 1000 + 500 * Math.random());
   });
@@ -43,6 +43,7 @@ const loadNode = async (id: string) => {
     }
     resolution = node.resolution.status!;
     responses = [];
+    Audio.play(resolution === ResolutionStatus.DATE ? 'success' : 'failure');
     return;
   }
 };

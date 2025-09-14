@@ -1,4 +1,6 @@
+import failure from 'assets/failure.mp3';
 import message from 'assets/message.mp3';
+import success from 'assets/success.mp3';
 
 const context = new AudioContext();
 const output = new GainNode(context, { gain: 0.4 });
@@ -12,7 +14,9 @@ window.addEventListener('click', () => {
 
 const buffers: { [key: string]: AudioBuffer } = {};
 [
+  { id: 'failure', source: failure },
   { id: 'message', source: message },
+  { id: 'success', source: success },
 ].forEach(async ({ id, source }) => {
   const res = await fetch(source);
   if (!res.ok) {
