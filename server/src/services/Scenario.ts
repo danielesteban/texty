@@ -2,7 +2,7 @@ import { badRequest, notFound } from '@hapi/boom';
 import { type NextFunction, type Request, type Response } from 'express';
 import { param } from 'express-validator';
 import { v4 as uuid } from 'uuid';
-import { isMongoId } from 'validator';
+import validator from 'validator';
 import { type WebSocket } from 'ws';
 import { type AuthorizedRequest } from 'core/Auth';
 import { checkValidationResult } from 'core/ErrorHandler';
@@ -149,7 +149,7 @@ export const shutdownEditorSockets = () => {
 
 export const editor = [
   (ws: WebSocket, req: AuthorizedRequest, next: NextFunction) => {
-    if (!isMongoId(req.params.id)) {
+    if (!validator.isMongoId(req.params.id)) {
       next(badRequest());
       return;
     }
