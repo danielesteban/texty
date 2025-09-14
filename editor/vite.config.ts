@@ -4,6 +4,10 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
 
 export default defineConfig(({ mode }) => ({
+  base: '/editor/',
+  build: {
+    outDir: '../game/dist/editor',
+  },
   define: {
     __SERVER__: JSON.stringify(process.env.SERVER || 'http://localhost:8082/'),
   },
