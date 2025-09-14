@@ -14,7 +14,7 @@ const es = {
   date: 'Tienes una cita!',
   friendzoned: 'Te han friendzoneado!',
   isTyping: '{name} está escribiendo...',
-  rejected: 'Te han rechazado!',
+  rejected: 'Has sido rechazado!',
   selectScenario: 'Elige un scenario',
   tryAgain: 'Inténtalo de nuevo',
   tryAnother: 'Prueba otro scenario',
