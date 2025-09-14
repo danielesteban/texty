@@ -47,7 +47,13 @@
   });
 </script>
 
-<svelte:window oncontextmenu={prevent} onresize={onResize} />
+<svelte:window
+  oncontextmenu={prevent}
+  onresize={onResize}
+  ondragenter={prevent}
+  ondragover={prevent}
+  ondrop={prevent}
+/>
 
 <div
   class="editor"

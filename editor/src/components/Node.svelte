@@ -2,6 +2,7 @@
   import Connector from 'components/Connector.svelte';
   import Image from 'components/Image.svelte';
   import { Drag } from 'helpers/Drag';
+  import { ResizeImage } from 'helpers/ResizeImage';
   import { Editor, ResolutionStatus, type Node } from 'state/Editor.svelte';
   import { Lang } from 'state/Lang.svelte';
 
@@ -68,6 +69,17 @@
     Editor.wire = null;
     outputs.length = 0;
   });
+
+  const updateScenarioPhoto = async (e: DragEvent) => {
+    if (!e.dataTransfer) {
+      return;
+    }
+    const [file] = e.dataTransfer.files;
+    if (!file || file.type.substring(0, 6) !== 'image/') {
+      return;
+    }
+    data.scenario!.photo = await ResizeImage(file, { x: 128, y: 128 });
+  };
 </script>
 
 <div
@@ -114,7 +126,8 @@
     </div>
   {/if}
   {#if data.scenario}
-    <div class="photo">
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="photo" ondrop={updateScenarioPhoto}>
       <div class="image">
         <Image data={data.scenario!.photo!} />
       </div>
