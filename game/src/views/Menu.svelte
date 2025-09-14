@@ -62,7 +62,7 @@
 
   .scenario > button {
     display: grid;
-    align-content: flex-start;
+    justify-items: center;
     gap: 0.5rem;
   }
 
