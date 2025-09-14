@@ -106,7 +106,7 @@
     display: grid;
     align-content: flex-start;
     gap: 0.5rem;
-    padding: 1rem;
+    padding: 1rem 1.5rem;
     overflow-y: auto;
   }
 
