@@ -57,27 +57,39 @@
       </div>
     {/if}
   </div>
-  <div class="responses">
-    {#each Game.responses as response}
-      {#if response.text && response.next}
-        <div class="response">
-          <button
-            disabled={Game.isTyping}
-            onclick={() => Game.respond(response)}
-          >
-            {response.text}
-          </button>
-        </div>
-      {/if}
-    {/each}
-    {#if Game.resolution !== null}
-      <div class="response">
-        <button class="reset" onclick={Game.reset}>
-          {Lang.current.resetGame}
+  {#if Game.resolution !== null}
+    <div class="options">
+      <button class="option" onclick={Game.reset}>
+        <svg width="1.5rem" height="1.5rem" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M23,12A11,11,0,1,1,12,1a10.9,10.9,0,0,1,5.882,1.7l1.411-1.411A1,1,0,0,1,21,2V6a1,1,0,0,1-1,1H16a1,1,0,0,1-.707-1.707L16.42,4.166A8.9,8.9,0,0,0,12,3a9,9,0,1,0,9,9,1,1,0,0,1,2,0Z"/>
+        </svg>
+        {Lang.current.tryAgain}
+      </button>
+      <a href="/#/" class="link">
+        <button class="option">
+          <svg width="1.5rem" height="1.5rem" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z"/>
+          </svg>
+          {Lang.current.tryAnother}
         </button>
-      </div>
-    {/if}
-  </div>
+      </a>
+    </div>
+  {:else if Game.responses.length}
+    <div class="responses">
+      {#each Game.responses as response}
+        {#if response.text && response.next}
+          <div class="response">
+            <button
+              disabled={Game.isTyping}
+              onclick={() => Game.respond(response)}
+            >
+              {response.text}
+            </button>
+          </div>
+        {/if}
+      {/each}
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -212,9 +224,6 @@
     gap: 0.5rem;
     background: #242626;
     border-top: 1px solid #000;
-    box-sizing: border-box;
-    min-height: 9rem;
-    align-content: center;
   }
   
   .response {
@@ -225,7 +234,22 @@
     justify-content: flex-start;
   }
 
-  .response > button.reset {
-    justify-content: center;
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 1rem;
+    gap: 0.5rem;
+    background: #242626;
+    border-top: 1px solid #000;
+  }
+
+  .option {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .link {
+    display: grid;
+    text-decoration: none;
   }
 </style>

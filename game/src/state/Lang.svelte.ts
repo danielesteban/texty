@@ -4,8 +4,9 @@ const en = {
   friendzoned: "You've been friendzoned!",
   isTyping: '{name} is typing...',
   rejected: "You've been rejected!",
-  resetGame: 'Reset game',
   selectScenario: 'Select a scenario',
+  tryAgain: 'Try again',
+  tryAnother: 'Try another scenario',
 };
 
 const es = {
@@ -14,8 +15,9 @@ const es = {
   friendzoned: 'Te han friendzoneado!',
   isTyping: '{name} está escribiendo...',
   rejected: 'Te han rechazado!',
-  resetGame: 'Reinciar juego',
   selectScenario: 'Elige un scenario',
+  tryAgain: 'Inténtalo de nuevo',
+  tryAnother: 'Prueba otro scenario',
 };
 
 const locales = { en, es };
