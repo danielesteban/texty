@@ -14,7 +14,7 @@
 </script>
 
 <!-- svelte-ignore a11y_missing_attribute -->
-<img src={url} />
+<img src={url} crossorigin="anonymous" />
 
 <style>
   img {
