@@ -11,7 +11,7 @@ const en = {
 
 const es = {
   blocked: 'Te han bloqueado!',
-  date: 'Tienes una cita!',
+  date: 'Has conseguido una cita!',
   friendzoned: 'Te han friendzoneado!',
   isTyping: '{name} está escribiendo...',
   rejected: 'Has sido rechazado!',
