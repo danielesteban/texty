@@ -24,7 +24,7 @@ const buffers: { [key: string]: AudioBuffer } = {};
 
 export const Audio = {
   play(id: string) {
-    if (!buffers[id]) {
+    if (!buffers[id] || context.state === 'suspended') {
       return;
     }
     const source = context.createBufferSource();
