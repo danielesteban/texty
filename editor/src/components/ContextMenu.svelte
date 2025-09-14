@@ -1,9 +1,10 @@
 <script lang="ts">
   import { type Snippet } from 'svelte';
+
   let { children, position }: {
     children: Snippet;
     position: { x: number, y: number } | null;
-  }= $props();
+  } = $props();
 </script>
 
 {#if position}
