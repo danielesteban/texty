@@ -21,7 +21,7 @@
   };
 
   const drawWire = (ctx: CanvasRenderingContext2D, from: { x: number; y: number }, to: { x: number; y: number }) => {
-    const offset = Math.sqrt((from.x - to.x) ** 2 + (from.y - to.y) ** 2) / 3;
+    const offset = Math.sqrt((from.x - to.x) ** 2) / 3;
     const cp1 = { x: from.x + offset, y: from.y };
     const cp2 = { x: to.x - offset, y: to.y };
     ctx.beginPath();
