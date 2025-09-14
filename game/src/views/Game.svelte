@@ -1,7 +1,8 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import { Game } from 'state/Game.svelte';
   import Image from 'components/Image.svelte';
+  import { Game } from 'state/Game.svelte';
+  import { Lang } from 'state/Lang.svelte';
 
   let messages = $state<HTMLDivElement>(null!);
 
@@ -36,27 +37,27 @@
     {/each}
     {#if Game.isTyping}
       <div class="typing">
-        {Game.scenario.scenario!.name} is typing...
+        {Lang.current.isTyping.replace('{name}', Game.scenario.scenario!.name!)}
       </div>
     {/if}
   </div>
   <div class="responses">
     {#each Game.responses as response}
-      <div class="response">
-        {#if response.text && response.next}
+      {#if response.text && response.next}
+        <div class="response">
           <button
             disabled={Game.isTyping}
             onclick={() => Game.respond(response)}
           >
             {response.text}
           </button>
-        {/if}
-      </div>
+        </div>
+      {/if}
     {/each}
     {#if Game.isDone}
       <div class="response">
         <button class="reset" onclick={Game.reset}>
-          RESET GAME
+          {Lang.current.resetGame}
         </button>
       </div>
     {/if}

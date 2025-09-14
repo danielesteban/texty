@@ -1,3 +1,4 @@
+import { Lang } from 'state/Lang.svelte';
 import { ResolutionStatus, Scenario, type INode as Node, type INodeMessageResponses, type IScenario } from '../../../protocol/messages.js';
 
 let hasLoaded = $state(false);
@@ -11,6 +12,13 @@ let responses = $state<INodeMessageResponses[]>([]);
 
 let typingTimer = $state<NodeJS.Timeout>();
 
+const resolutions: { [key: number]: keyof typeof Lang.current } = {
+  [ResolutionStatus.BLOCKED]: 'blocked',
+  [ResolutionStatus.DATE]: 'date',
+  [ResolutionStatus.FRIENDZONED]: 'friendzoned',
+  [ResolutionStatus.REJECTED]: 'rejected',
+};
+
 const loadNode = (id: string) => {
   isTyping = true;
   clearTimeout(typingTimer);
@@ -22,7 +30,7 @@ const loadNode = (id: string) => {
       responses = node.message!.responses!;
     }
     if (node.resolution) {
-      messages.push({ text: ResolutionStatus[node.resolution.status!], type: 'incoming' });
+      messages.push({ text: Lang.current[resolutions[node.resolution.status!]], type: 'incoming' });
       isDone = true;
     }
     isTyping = false;

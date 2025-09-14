@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Lang } from 'state/Lang.svelte';
+
   let scenarios = $state<{ _id: string; name: string; description: string; }[]>([]);
 
   fetch(`${__SERVER__}scenarios`)
@@ -15,7 +17,7 @@
 
 <div class="menu">
   <div class="header">
-    Select a scenario
+    {Lang.current.selectScenario}
   </div>
   <div class="scenarios">
     {#each scenarios as scenario}
