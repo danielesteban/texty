@@ -1,3 +1,4 @@
+import { Audio } from 'state/Audio';
 import { ResolutionStatus, Scenario, type INode as Node, type INodeMessageResponses, type IScenario } from '../../../protocol/messages.js';
 
 export { ResolutionStatus };
@@ -19,6 +20,7 @@ const typeMessage = (text: string) => {
   return new Promise<void>((resolve) => {
     typingTimer = setTimeout(() => {
       messages.push({ text, type: 'incoming' });
+      Audio.play('message');
       isTyping = false;
       resolve();
     }, 1000 + 500 * Math.random());

@@ -1,8 +1,8 @@
 <script lang="ts">
+  import iPhone from 'assets/iphone.png';
   import { Game as GameState } from 'state/Game.svelte';
   import Game from 'views/Game.svelte';
   import Menu from 'views/Menu.svelte';
-  import iPhone from '../iphone.png';
 
   const router = () => {
     const [route] = location.hash.slice(2).split('/');
