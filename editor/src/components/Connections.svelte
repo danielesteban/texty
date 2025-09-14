@@ -9,10 +9,10 @@
 
   const getOutputPosition = (node: Node, response: number) => {
     if (node.message) {
-      return { x: node.position!.x! + 299, y: node.position!.y! + 205 + (response * 72) };
+      return { x: node.position!.x! + 299, y: node.position!.y! + 185 + (response * 80) };
     }
     if (node.scenario) {
-      return { x: node.position!.x! + 299, y: node.position!.y! + 177 };      
+      return { x: node.position!.x! + 299, y: node.position!.y! + 179 };      
     }
     return { x: node.position!.x!, y: node.position!.y! };
   };

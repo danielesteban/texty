@@ -191,11 +191,7 @@
     overflow: hidden;
   }
 
-  .response > textarea {
-    height: 4rem;
-  }
-
-  .text > textarea {
-    height: 6rem;
+  .response > textarea, .text > textarea {
+    height: 4.5rem;
   }
 </style>
