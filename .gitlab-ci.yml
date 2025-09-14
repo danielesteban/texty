@@ -14,6 +14,7 @@ build-client:
         files:
           - editor/pnpm-lock.yaml
           - game/pnpm-lock.yaml
+          - protocol/pnpm-lock.yaml
       paths:
         - game/.pnpm-store
   variables:
@@ -21,8 +22,9 @@ build-client:
   before_script:
     - corepack enable
     - corepack prepare pnpm@latest-10 --activate
-    - pnpm -C game config set store-dir .pnpm-store
     - pnpm -C editor config set store-dir ../game/.pnpm-store
+    - pnpm -C game config set store-dir .pnpm-store
+    - pnpm -C protocol config set store-dir ../game/.pnpm-store
   script:
     - pnpm -C protocol install
     - pnpm -C protocol build
@@ -44,12 +46,14 @@ build-server:
   cache:
     - key:
         files:
+          - protocol/pnpm-lock.yaml
           - server/pnpm-lock.yaml
       paths:
         - server/.pnpm-store
   before_script:
     - corepack enable
     - corepack prepare pnpm@latest-10 --activate
+    - pnpm -C protocol config set store-dir ../server/.pnpm-store
     - pnpm -C server config set store-dir .pnpm-store
   script:
     - pnpm -C protocol install
