@@ -43,7 +43,7 @@
     for (const connector of connectors) {
       const id = connector.getAttribute('data-wiring-id')!;
       const { x, y, width, height } = connector.getBoundingClientRect();
-      outputs.push({ id, position: Editor.getWorldPosition({ x: x + width * 0.5, y: y + height * 0.5 }) });
+      outputs.push({ id, position: Editor.getWorldPosition({ x: x + width * 0.5 - 0.5, y: y + height * 0.5 - 0.5 }) });
     }
   }, (movement) => {
     // @dani @hack: This won't work when/if I add zoom/transform to the camera!!
@@ -153,6 +153,7 @@
     position: absolute;
     width: 300px;
     background: #111;
+    border: 1px solid #000;
     border-radius: 0.5rem;
     padding: 1rem;
     display: grid;

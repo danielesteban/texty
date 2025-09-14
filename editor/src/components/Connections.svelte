@@ -5,17 +5,17 @@
 
   const getInputPosition = (node: Node) => {
     if (node.resolution) {
-      return { x: node.position!.x!, y: node.position!.y! + 32 };
+      return { x: node.position!.x! + 1, y: node.position!.y! + 33 };
     }
-    return { x: node.position!.x!, y: node.position!.y! + 25 };
+    return { x: node.position!.x! + 1, y: node.position!.y! + 26 };
   };
 
   const getOutputPosition = (node: Node, response: number) => {
     if (node.message) {
-      return { x: node.position!.x! + 300, y: node.position!.y! + 204 + (response * 72) };
+      return { x: node.position!.x! + 299, y: node.position!.y! + 205 + (response * 72) };
     }
     if (node.scenario) {
-      return { x: node.position!.x! + 300, y: node.position!.y! + 176 };      
+      return { x: node.position!.x! + 299, y: node.position!.y! + 177 };      
     }
     return { x: node.position!.x!, y: node.position!.y! };
   };
