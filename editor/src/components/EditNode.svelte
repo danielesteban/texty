@@ -1,6 +1,7 @@
 <script lang="ts">
   import ContextMenu from 'components/ContextMenu.svelte';
   import { Editor } from 'state/Editor.svelte';
+  import { Lang } from 'state/Lang.svelte';
 
   const removeNode = () => {
     Editor.nodes.splice(Editor.nodes.findIndex(({ id }) => id === Editor.editingNode!.id), 1);
@@ -24,7 +25,7 @@
 
 <ContextMenu position={Editor.editingNode}>
   <button onclick={removeNode}>
-    Remove
+    {Lang.current.remove}
   </button>
 </ContextMenu>
 

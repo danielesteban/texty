@@ -21,6 +21,7 @@
     position: absolute;
     width: 100px;
     background: #111;
+    border: 1px solid #000;
     border-radius: 0.5rem;
     padding: 1rem;
     display: grid;

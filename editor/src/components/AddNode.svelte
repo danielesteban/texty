@@ -1,7 +1,8 @@
 <script lang="ts">
+  import { v4 as uuid } from 'uuid';
   import ContextMenu from 'components/ContextMenu.svelte';
   import { Editor, ResolutionStatus, type Node } from 'state/Editor.svelte';
-  import { v4 as uuid } from 'uuid';
+  import { Lang } from 'state/Lang.svelte';
 
   const addNode = (type: 'message' | 'resolution') => () => {
     let node: Node = {
@@ -33,10 +34,9 @@
 
 <ContextMenu position={Editor.addingNode}>
   <button onclick={addNode('message')}>
-    Message
+    {Lang.current.message}
   </button>
   <button onclick={addNode('resolution')}>
-    Resolution
+    {Lang.current.resolution}
   </button>
 </ContextMenu>
-
