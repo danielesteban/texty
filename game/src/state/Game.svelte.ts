@@ -29,7 +29,9 @@ const loadNode = async (id: string) => {
   selected = -1;
   const node = nodes.find((node) => node.id === id)!!;
   if (node.message) {
-    await typeMessage(node.message.text!);
+    if (node.message.text) {
+      await typeMessage(node.message.text);
+    }
     responses = node.message!.responses!;
     return;
   }
