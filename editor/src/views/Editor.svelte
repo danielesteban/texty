@@ -2,6 +2,7 @@
   import { untrack } from 'svelte';
   import AddNode from 'components/AddNode.svelte';
   import Connections from 'components/Connections.svelte';
+  import EditNode from 'components/EditNode.svelte';
   import Node from 'components/Node.svelte';
   import { Drag } from 'helpers/Drag';
   import { Editor } from 'state/Editor.svelte';
@@ -17,14 +18,13 @@
   const panCameraStart = Drag(() => {
     initialCamera.x = Editor.camera.x;
     initialCamera.y = Editor.camera.y;
+    Editor.addingNode = null;
+    Editor.editingNode = null;
   }, (movement) => {
     Editor.camera.x = initialCamera.x + movement.x;
     Editor.camera.y = initialCamera.y + movement.y;
   }, undefined, (pointer) => {
-    Editor.addingNode = {
-      x: pointer.x - origin.x - Editor.camera.x,
-      y: pointer.y - origin.y - Editor.camera.y,
-    };
+    Editor.addingNode = Editor.getWorldPosition(pointer);
   });
 
   const prevent = (e: Event) => e.preventDefault();
@@ -33,6 +33,7 @@
   let lastSave;
   let timer: NodeJS.Timeout;
   $effect(() => {
+    clearTimeout(timer);
     const current = JSON.stringify(Editor.nodes);
     if (lastSave === current) {
       return;
@@ -40,7 +41,6 @@
     if (untrack(() => Editor.updatedFromServer)) {
       return;
     }
-    clearTimeout(timer);
     timer = setTimeout(() => {
       Editor.save();
     }, 1000);
@@ -68,6 +68,7 @@
       <Node bind:data={Editor.nodes[i]} />
     {/each}
     <AddNode />
+    <EditNode />
   </div>
 </div>
 

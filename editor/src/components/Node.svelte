@@ -14,14 +14,16 @@
   const dragStart = Drag(() => {
     initialPosition.x = data.position!.x!;
     initialPosition.y = data.position!.y!;
+    Editor.addingNode = null;
+    Editor.editingNode = null;
   }, (movement) => {
     data.position!.x = initialPosition.x + movement.x;
     data.position!.y = initialPosition.y + movement.y;
-  });
-
-  const getWorldPosition = (position: { x: number; y: number }) => ({
-    x: position.x - window.innerWidth * 0.5 - Editor.camera.x,
-    y: position.y - window.innerHeight * 0.5 - Editor.camera.y,
+  }, undefined, (pointer) => {
+    Editor.editingNode = {
+      id: data.id!,
+      ...Editor.getWorldPosition(pointer),
+    };
   });
 
   let outputs: { id: string; position: { x: number; y: number } }[] = [];
@@ -33,7 +35,7 @@
     if (node.scenario) {
       delete node.scenario!.start;
     }
-    const position = getWorldPosition(pointer);
+    const position = Editor.getWorldPosition(pointer);
     Editor.wire = { node, response, position: { x: position.x, y: position.y}, ready: false };
     initialPosition.x = position.x;
     initialPosition.y = position.y;
@@ -41,7 +43,7 @@
     for (const connector of connectors) {
       const id = connector.getAttribute('data-wiring-id')!;
       const { x, y, width, height } = connector.getBoundingClientRect();
-      outputs.push({ id, position: getWorldPosition({ x: x + width * 0.5, y: y + height * 0.5 }) });
+      outputs.push({ id, position: Editor.getWorldPosition({ x: x + width * 0.5, y: y + height * 0.5 }) });
     }
   }, (movement) => {
     // @dani @hack: This won't work when/if I add zoom/transform to the camera!!

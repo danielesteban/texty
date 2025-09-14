@@ -5,17 +5,12 @@ import { User } from 'state/User.svelte';
 import { request } from 'state/Server';
 
 let addingNode = $state<{ x: number; y: number } | null>(null);
-
 let camera = $state({ x: 0, y: 0 });
-
+let editingNode = $state<{ id: string; x: number; y: number } | null>(null);
 let hasLoaded = $state(false);
-
 let id = $state<string>('');
-
 let nodes = $state<Node[]>([]);
-
 let socket = $state<WebSocket | null>(null);
-
 let updatedFromServer = $state(false);
 
 let wire = $state<{
@@ -36,6 +31,8 @@ export const Editor = {
   get addingNode() { return addingNode },
   set addingNode(value) { addingNode = value },
   get camera() { return camera },
+  get editingNode() { return editingNode },
+  set editingNode(value) { editingNode = value },
   get hasLoaded() { return hasLoaded },
   get nodes() { return nodes },
   get updatedFromServer() { return updatedFromServer },
@@ -87,6 +84,7 @@ export const Editor = {
   unload() {
     addingNode = null;
     camera = { x: 0, y: 0 };
+    editingNode = null;
     hasLoaded = false;
     id = '';
     nodes = [];
@@ -97,6 +95,12 @@ export const Editor = {
     }
     updatedFromServer = false;
     wire = null;
+  },
+  getWorldPosition(position: { x: number; y: number }) {
+    return {
+      x: position.x - window.innerWidth * 0.5 - Editor.camera.x,
+      y: position.y - window.innerHeight * 0.5 - Editor.camera.y,
+    };
   },
 };
 

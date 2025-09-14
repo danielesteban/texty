@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ContextMenu from 'components/ContextMenu.svelte';
   import { Editor, ResolutionStatus, type Node } from 'state/Editor.svelte';
   import { v4 as uuid } from 'uuid';
 
@@ -30,30 +31,12 @@
   };
 </script>
 
-{#if Editor.addingNode}
-  <div
-    class="menu"
-    onpointerdown={(e) => e.stopPropagation()}
-    style="top: {Editor.addingNode.y}px; left: {Editor.addingNode.x}px"
-  >
-    <button onclick={addNode('message')}>
-      Message
-    </button>
-    <button onclick={addNode('resolution')}>
-      Resolution
-    </button>
-  </div>
-{/if}
+<ContextMenu position={Editor.addingNode}>
+  <button onclick={addNode('message')}>
+    Message
+  </button>
+  <button onclick={addNode('resolution')}>
+    Resolution
+  </button>
+</ContextMenu>
 
-<style>
-  .menu {
-    position: absolute;
-    width: 100px;
-    background: #111;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    display: grid;
-    align-content: flex-start;
-    gap: 0.5rem;
-  }
-</style>

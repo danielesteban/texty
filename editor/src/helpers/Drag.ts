@@ -23,12 +23,12 @@ export const Drag = (
   return (e: PointerEvent) => {
     initialPointer.x = e.clientX;
     initialPointer.y = e.clientY;
-    if (e.button !== 0) {
-      e.button === 2 && onSecondary && onSecondary(initialPointer);
-      return;
-    }
     e.stopPropagation();
     if (['BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'].includes((e.target as HTMLDivElement).tagName)) {
+      return;
+    }
+    if (e.button !== 0) {
+      e.button === 2 && onSecondary && onSecondary(initialPointer);
       return;
     }
     const target = e.currentTarget as HTMLDivElement;
