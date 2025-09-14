@@ -183,7 +183,7 @@
   }
 
   .resolution {
-    margin: 3rem 2rem 2.5rem;
+    margin: 3.5rem 2rem 2.5rem;
     display: grid;
     justify-content: center;
     border: 4px solid #4d3714;
