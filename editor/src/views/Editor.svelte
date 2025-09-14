@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from 'svelte';
   import AddNode from 'components/AddNode.svelte';
   import Connections from 'components/Connections.svelte';
   import Node from 'components/Node.svelte';
@@ -29,17 +30,16 @@
   const prevent = (e: Event) => e.preventDefault();
 
   // @dani @hack Figure out a better way to do this shit
+  let lastSave;
   let timer: NodeJS.Timeout;
-  let lastSave = '';
   $effect(() => {
     const current = JSON.stringify(Editor.nodes);
-    if (!lastSave) {
-      lastSave = current;
-    }
     if (lastSave === current) {
       return;
     }
-    console.log('save');
+    if (untrack(() => Editor.updatedFromServer)) {
+      return;
+    }
     clearTimeout(timer);
     timer = setTimeout(() => {
       Editor.save();

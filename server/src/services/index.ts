@@ -1,8 +1,8 @@
 
-import { type Application } from 'express';
+import { type Application } from 'express-ws';
 import multer from 'multer';
 import nocache from 'nocache';
-import { requireAuth } from 'core/Auth';
+import { requireAuth, requireAuthWS } from 'core/Auth';
 import * as Scenario from 'services/Scenario';
 import * as User from 'services/User';
 
@@ -51,6 +51,11 @@ export default (app: Application) => {
     '/scenario/:id',
     preventCache,
     requireAuth(Scenario.remove)
+  );
+
+  app.ws(
+    '/scenario/:id',
+    ...requireAuthWS(Scenario.editor),
   );
 
   app.get(

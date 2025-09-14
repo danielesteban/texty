@@ -1,11 +1,13 @@
 import { unauthorized } from '@hapi/boom';
 import cors from 'cors';
-import express  from 'express';
+import express from 'express';
+import expressWS, { type Application } from 'express-ws';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
 import { allowedOrigins, mongoURI, port } from 'core/Config';
 import setupErrorHandler from 'core/ErrorHandler';
 import setupServices from 'services';
+import { shutdownEditorSockets } from 'services/Scenario';
 
 mongoose.connect(mongoURI);
 
@@ -21,8 +23,9 @@ app.use(cors({
   },
 }));
 app.use(express.json());
+expressWS(app, undefined, { wsOptions: { clientTracking: false } });
 
-setupServices(app);
+setupServices(app as unknown as Application);
 setupErrorHandler(app);
 
 const server = app.listen(port, '0.0.0.0', (error) => {
@@ -32,6 +35,7 @@ const server = app.listen(port, '0.0.0.0', (error) => {
 });
 
 const shutdown = () => {
+  shutdownEditorSockets();
   server.close(async () => {
     await mongoose.connection.close();
     process.nextTick(() => process.exit(0));

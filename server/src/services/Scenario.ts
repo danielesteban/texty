@@ -1,6 +1,9 @@
 import { badRequest, notFound } from '@hapi/boom';
 import { type NextFunction, type Request, type Response } from 'express';
 import { param } from 'express-validator';
+import { v4 as uuid } from 'uuid';
+import { isMongoId } from 'validator';
+import { type WebSocket } from 'ws';
 import { type AuthorizedRequest } from 'core/Auth';
 import { checkValidationResult } from 'core/ErrorHandler';
 import { Scenario } from 'models';
@@ -33,33 +36,65 @@ export const create = [
   },
 ];
 
+const loadScenario = (id: string) => (
+  Scenario
+    .findById(id)
+    .select('name description nodes photo')
+    .lean()
+    .then((scenario) => {
+      if (!scenario) {
+        throw notFound();
+      }
+      const data = Protocol.decode(scenario.nodes.buffer);
+      const scenarioNode = data.nodes.find(({ id }) => id === 'scenario');
+      if (!scenarioNode) {
+        throw new Error("Couldn't find the scenario node");
+      }
+      scenarioNode.scenario!.name = scenario.name;
+      scenarioNode.scenario!.description = scenario.description;
+      scenarioNode.scenario!.photo = scenario.photo.buffer;
+      return Protocol.encode(data).finish();
+    })
+);
+
+const saveScenario = (id: string, buffer: Buffer) => {
+  const data = Protocol.decode(buffer);
+  const scenarioNode = data.nodes.find(({ id }) => id === 'scenario');
+  if (!scenarioNode) {
+    throw new Error("Couldn't find the scenario node");
+  }
+  const { description, name, photo } = scenarioNode.scenario!;
+  delete scenarioNode.scenario!.name;
+  delete scenarioNode.scenario!.description;
+  delete scenarioNode.scenario!.photo;
+  return Scenario
+    .updateOne({ _id: id }, {
+      $set: {
+        name,
+        description,
+        nodes: Buffer.from(Protocol.encode(data).finish()),
+        photo,
+      },
+    });
+}
+
 export const load = [
   param('id')
     .isMongoId(),
   checkValidationResult,
   (req: Request, res: Response, next: NextFunction) => {
-    Scenario
-      .findById(req.params.id)
-      .select('name description nodes photo')
-      .lean()
-      .then((scenario) => {
-        if (!scenario) {
-          throw notFound();
-        }
-        const data = Protocol.decode(scenario.nodes.buffer);
-        const scenarioNode = data.nodes.find(({ id }) => id === 'scenario');
-        if (!scenarioNode) {
-          throw new Error("Couldn't find the scenario node");
-        }
-        scenarioNode.scenario!.name = scenario.name;
-        scenarioNode.scenario!.description = scenario.description;
-        scenarioNode.scenario!.photo = scenario.photo.buffer;
-        res.send(Protocol.encode(data).finish());
+    loadScenario(req.params.id)
+      .then((buffer) => {
+        res.send(buffer);
       })
       .catch(next);
   },
 ];
 
+// @dani
+// This service is sort of redundant with the WS editor endpoint
+// But it doesn't hurt to keep it.. Although using it may desync the peers.
+// Let me think about it later and consider removing it.
 export const save = [
   param('id')
     .isMongoId(),
@@ -69,24 +104,7 @@ export const save = [
       next(badRequest());
       return;
     }
-    const data = Protocol.decode(req.file.buffer);
-    const scenarioNode = data.nodes.find(({ id }) => id === 'scenario');
-    if (!scenarioNode) {
-      throw new Error("Couldn't find the scenario node");
-    }
-    const { description, name, photo } = scenarioNode.scenario!;
-    delete scenarioNode.scenario!.name;
-    delete scenarioNode.scenario!.description;
-    delete scenarioNode.scenario!.photo;
-    Scenario
-      .updateOne({ _id: req.params.id }, {
-        $set: {
-          name,
-          description,
-          nodes: Buffer.from(Protocol.encode(data).finish()),
-          photo,
-        },
-      })
+    saveScenario(req.params.id, req.file.buffer)
       .then(() => {
         res.status(200).end();
       })
@@ -94,6 +112,9 @@ export const save = [
   },
 ];
 
+// @dani
+// Same for this. This will desync the peers.
+// Let's refactor it later into the WS endpoint when it's actually used in the UI.
 export const remove = [
   param('id')
     .isMongoId(),
@@ -105,6 +126,67 @@ export const remove = [
         res.status(200).end();
       })
       .catch(next);
+  },
+];
+
+type Peer = WebSocket & { id: string; isAlive: boolean; };
+const peersMap = new Map<string, Peer[]>();
+const pingInterval = setInterval(() => (
+  peersMap.forEach((peers) => peers.forEach((peer) => {
+    if (peer.isAlive === false) {
+      peer.terminate();
+      return;
+    }
+    peer.isAlive = false;
+    peer.ping(() => {});
+  }))
+), 30000);
+
+export const shutdownEditorSockets = () => {
+  peersMap.forEach((peers) => peers.forEach((peer) => peer.close()));
+  clearInterval(pingInterval);
+};
+
+export const editor = [
+  (ws: WebSocket, req: AuthorizedRequest, next: NextFunction) => {
+    if (!isMongoId(req.params.id)) {
+      next(badRequest());
+      return;
+    }
+    let peers = peersMap.get(req.params.id);
+    if (!peers) {
+      peers = [];
+      peersMap.set(req.params.id, peers);
+    }
+    const peer = ws as unknown as Peer;
+    peer.id = uuid();
+    peer.isAlive = true;
+    peer.once('close', () => {
+      const index = peers.findIndex(({ id }) => (id === peer.id));
+      if (index !== -1) {
+        peers.splice(index, 1);
+      }
+    });
+    peer.on('pong', () => {
+      peer.isAlive = true;
+    });
+    peer.on('message', (buffer) => {
+      if (!(buffer instanceof Buffer)) {
+        return;
+      }
+      saveScenario(req.params.id, buffer)
+        .then(() => peers.forEach((p) => {
+          if (p.id === peer.id) {
+            return;
+          }
+          p.send(buffer);
+        }))
+        .catch(() => peer.close());
+    });
+    peers.push(peer);
+    loadScenario(req.params.id)
+      .then((buffer) => peer.send(buffer))
+      .catch(() => peer.close());
   },
 ];
 

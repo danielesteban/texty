@@ -1,3 +1,4 @@
+import { tick } from 'svelte';
 import { ResolutionStatus, Scenario, type INode as Node, type IScenario } from '../../../protocol/messages.js';
 export { ResolutionStatus, type Node };
 import { User } from 'state/User.svelte';
@@ -13,6 +14,10 @@ let id = $state<string>('');
 
 let nodes = $state<Node[]>([]);
 
+let socket = $state<WebSocket | null>(null);
+
+let updatedFromServer = $state(false);
+
 let wire = $state<{
   node: Node;
   response: number;
@@ -20,12 +25,20 @@ let wire = $state<{
   ready: boolean;
 } | null>(null);
 
+// @dani @hack: reconnect if socket closes instead of this
+const onDisconnect = (e: CloseEvent) => {
+  if (e.code > 1001) {
+    location.hash = '/';
+  }
+};
+
 export const Editor = {
   get addingNode() { return addingNode },
   set addingNode(value) { addingNode = value },
   get camera() { return camera },
   get hasLoaded() { return hasLoaded },
   get nodes() { return nodes },
+  get updatedFromServer() { return updatedFromServer },
   get wire() { return wire },
   set wire(value) { wire = value },
   async create() {
@@ -38,25 +51,24 @@ export const Editor = {
   },
   async load(scenario: string) {
     this.unload();
-    return await request({
-      endpoint: `scenario/${scenario}`,
-    })
-      .then((data) => {
+    socket = new WebSocket(`${__SERVER__}scenario/${scenario}?auth=${User.session}`);
+    socket.binaryType = 'arraybuffer';
+    socket.addEventListener('close', onDisconnect);
+    socket.addEventListener('message', ({ data: buffer }) => {
+      if (!hasLoaded) {
         id = scenario;
-        nodes = (Scenario.toObject(Scenario.decode(new Uint8Array(data))) as IScenario).nodes!;
         hasLoaded = true;
-      });
+      }
+      updatedFromServer = true;
+      nodes = (Scenario.toObject(Scenario.decode(new Uint8Array(buffer))) as IScenario).nodes!;
+      tick().then(() => { updatedFromServer = false; });
+    });
   },
   async save() {
-    const data = new FormData();
-    // @ts-ignore
-    data.append('data', new Blob([Scenario.encode({ nodes }).finish()]));
-    return await request({
-      body: data,
-      endpoint: `scenario/${id}`,
-      method: 'PUT',
-      session: User.session!,
-    });
+    if (!socket) {
+      throw new Error('Not connected!');
+    }
+    socket.send(Scenario.encode({ nodes }).finish());
   },
   async remove() {
     await request({
@@ -78,6 +90,12 @@ export const Editor = {
     hasLoaded = false;
     id = '';
     nodes = [];
+    if (socket) {
+      socket.removeEventListener('close', onDisconnect);
+      socket.close();
+      socket = null;
+    }
+    updatedFromServer = false;
     wire = null;
   },
 };
