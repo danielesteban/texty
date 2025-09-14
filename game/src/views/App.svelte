@@ -42,6 +42,7 @@
     width: 100%;
     height: 100%;
     display: grid;
+    min-height: 0;
   }
 
   @media (min-width: 700px) {
