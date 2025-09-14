@@ -36,7 +36,7 @@
       delete node.scenario!.start;
     }
     const position = Editor.getWorldPosition(pointer);
-    Editor.wire = { node, response, position: { x: position.x, y: position.y}, ready: false };
+    Editor.wire = { node, response, position: { x: position.x, y: position.y }, ready: false };
     initialPosition.x = position.x;
     initialPosition.y = position.y;
     const connectors = document.querySelectorAll('[data-wiring-id]');
@@ -70,6 +70,7 @@
     }
     Editor.wire = null;
     outputs.length = 0;
+    output = null;
   });
 
   const updateScenarioPhoto = async (e: DragEvent) => {
