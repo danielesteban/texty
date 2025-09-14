@@ -1,19 +1,19 @@
 const en = {
-  blocked: 'Blocked',
-  date: 'Date',
-  friendzoned: 'Friendzoned',
+  blocked: "You've been blocked!",
+  date: "You've got a date!",
+  friendzoned: "You've been friendzoned!",
   isTyping: '{name} is typing...',
-  rejected: 'Rejected',
+  rejected: "You've been rejected!",
   resetGame: 'Reset game',
   selectScenario: 'Select a scenario',
 };
 
 const es = {
-  blocked: 'Bloqueado',
-  date: 'Cita',
-  friendzoned: 'Friendzoned',
+  blocked: 'Te han bloqueado!',
+  date: 'Tienes una cita!',
+  friendzoned: 'Te han friendzoneado!',
   isTyping: '{name} está escribiendo...',
-  rejected: 'Rechazado',
+  rejected: 'Te han rechazado!',
   resetGame: 'Reinciar juego',
   selectScenario: 'Elige un scenario',
 };

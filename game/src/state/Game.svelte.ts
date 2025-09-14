@@ -1,48 +1,47 @@
-import { Lang } from 'state/Lang.svelte';
 import { ResolutionStatus, Scenario, type INode as Node, type INodeMessageResponses, type IScenario } from '../../../protocol/messages.js';
 
+export { ResolutionStatus };
+
 let hasLoaded = $state(false);
-let isDone = $state(false);
 let isTyping = $state(false);
 
 let nodes = $state<Node[]>([]);
 let messages = $state<{ text: string; type: 'incoming' | 'outgoing' }[]>([]);
 let scenario = $state<Node>({});
+let resolution = $state<ResolutionStatus | null>(null);
 let responses = $state<INodeMessageResponses[]>([]);
 
 let typingTimer = $state<NodeJS.Timeout>();
 
-const resolutions: { [key: number]: keyof typeof Lang.current } = {
-  [ResolutionStatus.BLOCKED]: 'blocked',
-  [ResolutionStatus.DATE]: 'date',
-  [ResolutionStatus.FRIENDZONED]: 'friendzoned',
-  [ResolutionStatus.REJECTED]: 'rejected',
-};
-
 const loadNode = (id: string) => {
-  isTyping = true;
+  isTyping = false;
   clearTimeout(typingTimer);
-  typingTimer = setTimeout(() => {
+  const node = nodes.find((node) => node.id === id)!!;
+  if (node.message) {
+    isTyping = true;
+    typingTimer = setTimeout(() => {
+      responses = [];
+      if (node.message) {
+        messages.push({ text: node.message.text!, type: 'incoming' });
+        responses = node.message!.responses!;
+      }
+      isTyping = false;
+    }, 1000 + 500 * Math.random());
+    return;
+  }
+  if (node.resolution) {
+    resolution = node.resolution.status!;
     responses = [];
-    const node = nodes.find((node) => node.id === id)!!;
-    if (node.message) {
-      messages.push({ text: node.message.text!, type: 'incoming' });
-      responses = node.message!.responses!;
-    }
-    if (node.resolution) {
-      messages.push({ text: Lang.current[resolutions[node.resolution.status!]], type: 'incoming' });
-      isDone = true;
-    }
-    isTyping = false;
-  }, 1000 + 500 * Math.random());
+    return;
+  }
 };
 
 export const Game = {
   get hasLoaded() { return hasLoaded },
-  get isDone() { return isDone },
   get isTyping() { return isTyping },
   get messages() { return messages },
   get scenario() { return scenario },
+  get resolution() { return resolution },
   get responses() { return responses },
   async load(id: string) {
     const res = await fetch(`${__SERVER__}scenario/${id}`);
@@ -61,17 +60,17 @@ export const Game = {
     loadNode(response.next!);
   },
   reset() {
-    isDone = false;
     messages = [];
+    resolution = null;
     loadNode(Game.scenario.scenario!.start!);
   },
   unload() {
     hasLoaded = false;
-    isDone = false;
     isTyping = false;
     nodes = [];
     messages = [];
     scenario = {};
+    resolution = null;
     responses = [];
     clearTimeout(typingTimer);
   },

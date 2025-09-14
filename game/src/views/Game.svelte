@@ -1,8 +1,15 @@
 <script lang="ts">
   import { tick } from 'svelte';
   import Image from 'components/Image.svelte';
-  import { Game } from 'state/Game.svelte';
+  import { Game, ResolutionStatus } from 'state/Game.svelte';
   import { Lang } from 'state/Lang.svelte';
+
+  const resolutions: { [key: number]: keyof typeof Lang.current } = {
+    [ResolutionStatus.BLOCKED]: 'blocked',
+    [ResolutionStatus.DATE]: 'date',
+    [ResolutionStatus.FRIENDZONED]: 'friendzoned',
+    [ResolutionStatus.REJECTED]: 'rejected',
+  };
 
   let messages = $state<HTMLDivElement>(null!);
 
@@ -11,6 +18,7 @@
 
     Game.isTyping;
 		Game.messages.length;
+		Game.resolution;
 
 		if (messages.offsetHeight + messages.scrollTop > messages.scrollHeight - 20) {
 			tick().then(() => {
@@ -43,6 +51,11 @@
         {Lang.current.isTyping.replace('{name}', Game.scenario.scenario!.name!)}
       </div>
     {/if}
+    {#if Game.resolution !== null}
+      <div class="resolution" class:success={Game.resolution === ResolutionStatus.DATE}>
+        {Lang.current[resolutions[Game.resolution]]}
+      </div>
+    {/if}
   </div>
   <div class="responses">
     {#each Game.responses as response}
@@ -57,7 +70,7 @@
         </div>
       {/if}
     {/each}
-    {#if Game.isDone}
+    {#if Game.resolution !== null}
       <div class="response">
         <button class="reset" onclick={Game.reset}>
           {Lang.current.resetGame}
@@ -161,6 +174,32 @@
 
   .message.outgoing > .arrow::before {
     border-left: 0.5rem solid #144d37; 
+  }
+
+  @keyframes resolution {
+    0% { rotate: -13deg; }
+    50% { rotate: -7deg; }
+    100% { rotate: -13deg; }
+  }
+
+  .resolution {
+    margin: 3rem 2rem 2.5rem;
+    display: grid;
+    justify-content: center;
+    border: 4px solid #4d3714;
+    border-radius: 0.5rem;
+    background: #242626;
+    padding: 1rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    rotate: -10deg;
+    animation-name: resolution;
+    animation-duration: 1.2s;
+    animation-iteration-count: infinite;
+  }
+
+  .resolution.success {
+    border-color: #144d37;
   }
 
   .typing {
