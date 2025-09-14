@@ -15,9 +15,9 @@ const es = {
   friendzoned: 'Te han friendzoneado!',
   isTyping: '{name} está escribiendo...',
   rejected: 'Has sido rechazado!',
-  selectScenario: 'Elige un scenario',
+  selectScenario: 'Elige un escenario',
   tryAgain: 'Inténtalo de nuevo',
-  tryAnother: 'Prueba otro scenario',
+  tryAnother: 'Prueba otro escenario',
 };
 
 const locales = { en, es };
