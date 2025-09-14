@@ -25,8 +25,10 @@
         <button>
           <!-- svelte-ignore a11y_missing_attribute -->
           <img class="photo" src={`${__SERVER__}scenario/${scenario._id}/photo`} crossorigin="anonymous" />
-          <div>{scenario.name}</div>
-          <div class="description">{scenario.description}</div>
+          <div>
+            <div>{scenario.name}</div>
+            <div class="description">{scenario.description}</div>
+          </div>
         </button>
       </a>
     {/each}

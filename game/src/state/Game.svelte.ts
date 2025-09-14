@@ -13,23 +13,28 @@ let responses = $state<INodeMessageResponses[]>([]);
 
 let typingTimer = $state<NodeJS.Timeout>();
 
-const loadNode = (id: string) => {
-  isTyping = false;
-  clearTimeout(typingTimer);
+const typeMessage = (text: string) => {
+  isTyping = true;
+  return new Promise<void>((resolve) => {
+    typingTimer = setTimeout(() => {
+      messages.push({ text, type: 'incoming' });
+      isTyping = false;
+      resolve();
+    }, 1000 + 500 * Math.random());
+  });
+};
+
+const loadNode = async (id: string) => {
   const node = nodes.find((node) => node.id === id)!!;
   if (node.message) {
-    isTyping = true;
-    typingTimer = setTimeout(() => {
-      responses = [];
-      if (node.message) {
-        messages.push({ text: node.message.text!, type: 'incoming' });
-        responses = node.message!.responses!;
-      }
-      isTyping = false;
-    }, 1000 + 500 * Math.random());
+    await typeMessage(node.message.text!);
+    responses = node.message!.responses!;
     return;
   }
   if (node.resolution) {
+    if (node.resolution.text) {
+      await typeMessage(node.resolution.text!);
+    }
     resolution = node.resolution.status!;
     responses = [];
     return;

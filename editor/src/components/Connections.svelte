@@ -4,9 +4,6 @@
   let canvas: HTMLCanvasElement = null!;
 
   const getInputPosition = (node: Node) => {
-    if (node.resolution) {
-      return { x: node.position!.x! + 1, y: node.position!.y! + 33 };
-    }
     return { x: node.position!.x! + 1, y: node.position!.y! + 26 };
   };
 

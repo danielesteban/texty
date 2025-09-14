@@ -20,7 +20,7 @@
           <button>
             <!-- svelte-ignore a11y_missing_attribute -->
             <img class="photo" src={`${__SERVER__}scenario/${scenario._id}/photo`} crossorigin="anonymous" />
-            <div class="info">
+            <div>
               <div>{scenario.name}</div>
               <div class="description">{scenario.description}</div>
             </div>
@@ -88,11 +88,6 @@
     border-radius: 8rem;
     pointer-events: none;
     overflow: hidden;
-  }
-
-  .info {
-    display: grid;
-    gap: 0.5rem;
   }
 
   .description {

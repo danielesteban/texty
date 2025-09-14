@@ -120,12 +120,19 @@
         position="left"
         wiringId={data.id!}
       />
-      <select bind:value={data.resolution!.status!}>
-        <option value={ResolutionStatus.BLOCKED}>{Lang.current.blocked}</option>
-        <option value={ResolutionStatus.DATE}>{Lang.current.date}</option>
-        <option value={ResolutionStatus.FRIENDZONED}>{Lang.current.friendzoned}</option>
-        <option value={ResolutionStatus.REJECTED}>{Lang.current.rejected}</option>
-      </select>
+      <!-- svelte-ignore a11y_label_has_associated_control -->
+      <label>{Lang.current.status}</label>
+    </div>
+    <select bind:value={data.resolution!.status!}>
+      <option value={ResolutionStatus.BLOCKED}>{Lang.current.blocked}</option>
+      <option value={ResolutionStatus.DATE}>{Lang.current.date}</option>
+      <option value={ResolutionStatus.FRIENDZONED}>{Lang.current.friendzoned}</option>
+      <option value={ResolutionStatus.REJECTED}>{Lang.current.rejected}</option>
+    </select>
+    <!-- svelte-ignore a11y_label_has_associated_control -->
+    <label>{Lang.current.message}</label>
+    <div class="text">
+      <textarea bind:value={data.resolution!.text!}></textarea>
     </div>
   {/if}
   {#if data.scenario}

@@ -15,6 +15,7 @@ const en = {
   signin: 'Sign in',
   signinAlternative: 'Need an account?',
   signinError: 'Error signing in',
+  status: 'Status',
   username: 'Username',
 };
 
@@ -35,6 +36,7 @@ const es = {
   signin: 'Iniciar sesión',
   signinAlternative: 'Necesitas una cuenta?',
   signinError: 'Error iniciando sesión',
+  status: 'Estado',
   username: 'Usuario',
 };
 

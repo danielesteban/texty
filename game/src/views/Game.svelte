@@ -1,6 +1,7 @@
 <script lang="ts">
   import { tick } from 'svelte';
   import Image from 'components/Image.svelte';
+  import Text from 'components/Text.svelte';
   import { Game, ResolutionStatus } from 'state/Game.svelte';
   import { Lang } from 'state/Lang.svelte';
 
@@ -42,7 +43,7 @@
       <div>
         <div class="message {message.type}">
           <div class="arrow"></div>
-          {message.text}
+          <Text value={message.text} />
         </div>
       </div>
     {/each}
@@ -83,7 +84,7 @@
               disabled={Game.isTyping}
               onclick={() => Game.respond(response)}
             >
-              {response.text}
+              <Text value={response.text} />
             </button>
           </div>
         {/if}
@@ -231,7 +232,8 @@
   }
 
   .response > button {
-    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .options {
