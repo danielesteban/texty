@@ -6,6 +6,7 @@ import { defineConfig } from 'vite';
 export default defineConfig(({ mode }) => ({
   base: '/editor/',
   build: {
+    emptyOutDir: true,
     outDir: '../game/dist/editor',
   },
   define: {
