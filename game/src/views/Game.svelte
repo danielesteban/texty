@@ -243,7 +243,7 @@
     padding: 0.75rem 1rem;
     gap: 0.75rem;
     color: #eee;
-    border-top: 1px solid #000;
+    border-top: 1px solid #111;
     cursor: pointer;
   }
 
@@ -275,7 +275,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     padding: 1rem;
-    gap: 0.5rem;
+    gap: 1rem;
     background: #242626;
     border-top: 1px solid #000;
   }
