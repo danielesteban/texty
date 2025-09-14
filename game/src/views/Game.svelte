@@ -32,7 +32,10 @@
   <div bind:this={messages} class="messages">
     {#each Game.messages as message}
       <div>
-        <div class="message {message.type}">{message.text}</div>
+        <div class="message {message.type}">
+          <div class="arrow"></div>
+          {message.text}
+        </div>
       </div>
     {/each}
     {#if Game.isTyping}
@@ -66,7 +69,7 @@
 
 <style>
   .game {
-    background: #222;
+    background: #1a1a1a;
     border-radius: 0.5rem;
     display: grid;
     grid-template-rows: auto 1fr auto;
@@ -78,8 +81,11 @@
     grid-template-columns: auto 1fr;
     align-items: center;
     gap: 1rem;
-    background: #000;
+    background: #111;
     padding: 0.5rem 1rem;
+    border-bottom: 1px solid #000;
+    font-size: 1rem;
+    line-height: 1.5rem;
   }
 
   .photo {
@@ -105,17 +111,56 @@
   }
 
   .message {
+    position: relative;
     padding: 0.5rem;
-    background: #333;
     border-radius: 0.5rem;
   }
 
+  .message > .arrow {
+    position: absolute;
+    top: 0;
+    width: 0.5rem;
+    height: 0.5rem;
+    overflow: hidden;
+  }
+
+  .message > .arrow::before {
+    position: absolute;
+    top: -0.5rem;
+    left: 0;
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 0.5rem solid transparent;
+    border-bottom: 0.5rem solid transparent; 
+  }
+  
   .message.incoming {
     float: left;
+    background: #242626;
+    border-top-left-radius: 0;
+  }
+
+  .message.incoming > .arrow {
+    left: -0.5rem;
+  }
+
+  .message.incoming > .arrow::before {
+    border-right: 0.5rem solid #242626; 
   }
 
   .message.outgoing {
     float: right;
+    background: #144d37;
+    border-top-right-radius: 0;
+  }
+
+  .message.outgoing > .arrow {
+    right: -0.5rem;
+  }
+
+  .message.outgoing > .arrow::before {
+    border-left: 0.5rem solid #144d37; 
   }
 
   .typing {
@@ -126,7 +171,7 @@
     display: grid;
     padding: 1rem;
     gap: 0.5rem;
-    background: #333;
+    background: #242626;
     border-top: 1px solid #000;
     box-sizing: border-box;
     min-height: 9rem;
