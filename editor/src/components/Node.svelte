@@ -50,7 +50,7 @@
     Editor.wire!.position.x = initialPosition.x + movement.x;
     Editor.wire!.position.y = initialPosition.y + movement.y;
     output = outputs.find(({ position }) => (
-      ((position.x - Editor.wire!.position.x) ** 2 + (position.y - Editor.wire!.position.y) ** 2) < 256
+      ((position.x - Editor.wire!.position.x) ** 2 + (position.y - Editor.wire!.position.y) ** 2) < 576
     )) || null;
     if (output) {
       Editor.wire!.position.x = output.position.x;

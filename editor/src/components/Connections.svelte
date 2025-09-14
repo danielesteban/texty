@@ -27,6 +27,11 @@
     ctx.beginPath();
     ctx.moveTo(from.x, from.y);
     ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, to.x, to.y);
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#99e';
+    ctx.stroke();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#339';
     ctx.stroke();
   };
 
@@ -37,8 +42,6 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     const ctx = canvas.getContext('2d')!;
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = '#339';
     ctx.translate(window.innerWidth * 0.5 + Editor.camera.x, window.innerHeight * 0.5 + Editor.camera.y);
     Editor.nodes.forEach((node) => {
       if (node.message) {
