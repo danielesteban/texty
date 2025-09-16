@@ -49,7 +49,7 @@ const saveScenario = (id: string, data: Protocol) => {
         name,
         description,
         nodes: Buffer.from(Protocol.encode(scenario).finish()),
-        photo,
+        photo: Buffer.from(photo!),
       },
     })
     .exec();
