@@ -165,6 +165,7 @@ class Editor {
   private loading?: Promise<void>;
   private readonly peers: (WebSocket & { id: string; isAlive: boolean; })[] = [];
   private saveTimer?: NodeJS.Timeout;
+  private saving?: Promise<void>;
 
   constructor(id: string) {
     this.id = id;
@@ -179,6 +180,9 @@ class Editor {
         delete this.loading;
       });
       await this.loading;
+    }
+    if (ws.readyState !== ws.OPEN) {
+      return;
     }
     const { data, peers } = this;
     const peer = ws as unknown as typeof this.peers[0];
@@ -231,7 +235,10 @@ class Editor {
     if (!this.data) {
       throw new Error('Data is not loaded');
     }
-    await saveScenario(this.id, this.data);
+    this.saving = saveScenario(this.id, this.data).then(() => {
+      delete this.saving;
+    });
+    await this.saving;
   }
 
   private debounceSave() {
@@ -244,6 +251,9 @@ class Editor {
     if (this.saveTimer) {
       clearTimeout(this.saveTimer);
       await this.save();
+    }
+    if (this.saving) {
+      await this.saving;
     }
   }
 }
