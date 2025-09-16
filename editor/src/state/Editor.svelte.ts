@@ -10,8 +10,8 @@ let editingNode = $state<{ id: string; x: number; y: number } | null>(null);
 let hasLoaded = $state(false);
 let id = $state<string>('');
 let nodes = $state<Node[]>([]);
+let origin = $state({ x: 0, y: 0 });
 let socket = $state<WebSocket | null>(null);
-
 let wire = $state<{
   node: Node;
   response: number;
@@ -34,6 +34,7 @@ export const Editor = {
   set editingNode(value) { editingNode = value },
   get hasLoaded() { return hasLoaded },
   get nodes() { return nodes },
+  get origin() { return origin },
   get wire() { return wire },
   set wire(value) { wire = value },
   async create() {
@@ -61,13 +62,6 @@ export const Editor = {
     };
     socket.addEventListener('message', onLoad);
   },
-  update(action: IAction) {
-    ProcessAction(nodes, new Action(action));
-    if (!socket) {
-      throw new Error('Not connected!');
-    }
-    socket.send(Action.encode(action).finish());
-  },
   async remove() {
     await request({
       endpoint: `scenario/${id}`,
@@ -81,6 +75,13 @@ export const Editor = {
       endpoint: `scenarios`,
     });
     return scenarios;
+  },
+  update(action: IAction) {
+    ProcessAction(nodes, new Action(action));
+    if (!socket) {
+      throw new Error('Not connected!');
+    }
+    socket.send(Action.encode(action).finish());
   },
   unload() {
     camera = { x: 0, y: 0 };
@@ -98,8 +99,8 @@ export const Editor = {
   },
   getWorldPosition(position: { x: number; y: number }) {
     return {
-      x: position.x - window.innerWidth * 0.5 - Editor.camera.x,
-      y: position.y - window.innerHeight * 0.5 - Editor.camera.y,
+      x: position.x - origin.x - Editor.camera.x,
+      y: position.y - origin.y - Editor.camera.y,
     };
   },
 };

@@ -6,10 +6,9 @@
   import { Drag } from 'helpers/Drag';
   import { Editor } from 'state/Editor.svelte';
 
-  let origin = $state({ x: 0, y: 0 });
   const onResize = () => {
-    origin.x = window.innerWidth * 0.5;
-    origin.y = window.innerHeight * 0.5;
+    Editor.origin.x = window.innerWidth * 0.5;
+    Editor.origin.y = window.innerHeight * 0.5;
   };
   onResize();
 
@@ -48,7 +47,7 @@
   <Connections />
   <div
     class="viewport"
-    style="left: {origin.x + Editor.camera.x}px; top: {origin.y + Editor.camera.y}px"
+    style="left: {Editor.origin.x + Editor.camera.x}px; top: {Editor.origin.y + Editor.camera.y}px"
   >
     {#each Editor.nodes as data}
       <Node {data} />

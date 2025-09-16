@@ -32,14 +32,14 @@
     ctx.stroke();
   };
 
-  const draw = () => {
+  $effect(() => {
     if (!canvas) {
       return;
     }
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     const ctx = canvas.getContext('2d')!;
-    ctx.translate(window.innerWidth * 0.5 + Editor.camera.x, window.innerHeight * 0.5 + Editor.camera.y);
+    ctx.translate(Editor.origin.x + Editor.camera.x, Editor.origin.y + Editor.camera.y);
     Editor.nodes.forEach((node) => {
       if (node.message) {
         node.message!.responses!.forEach(({ next }, i) => {
@@ -68,11 +68,8 @@
       drawWire(ctx, from, Editor.wire.position);
       ctx.setLineDash([]);
     }
-  };
-  $effect(draw);
+  });
 </script>
-
-<svelte:window onresize={draw} />
 
 <canvas bind:this={canvas} class="connections"></canvas>
 

@@ -207,8 +207,8 @@ class Editor {
     peer.on('pong', () => {
       peer.isAlive = true;
     });
-    peers.push(peer);
     peer.send(Protocol.encode(data).finish());
+    peers.push(peer);
   }
 
   ping() {
