@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { untrack } from 'svelte';
-  import AddNode from 'components/AddNode.svelte';
   import Connections from 'components/Connections.svelte';
+  import CreateNode from 'components/CreateNode.svelte';
   import EditNode from 'components/EditNode.svelte';
   import Node from 'components/Node.svelte';
   import { Drag } from 'helpers/Drag';
@@ -15,36 +14,23 @@
   onResize();
 
   const initialCamera = { x: 0, y: 0 };
-  const panCameraStart = Drag(() => {
-    initialCamera.x = Editor.camera.x;
-    initialCamera.y = Editor.camera.y;
-    Editor.addingNode = null;
-    Editor.editingNode = null;
-  }, (movement) => {
-    Editor.camera.x = initialCamera.x + movement.x;
-    Editor.camera.y = initialCamera.y + movement.y;
-  }, undefined, (pointer) => {
-    Editor.addingNode = Editor.getWorldPosition(pointer);
+  const panCameraStart = Drag({
+    onStart() {
+      initialCamera.x = Editor.camera.x;
+      initialCamera.y = Editor.camera.y;
+      Editor.creatingNode = null;
+      Editor.editingNode = null;
+    },
+    onMove(_, movement) {
+      Editor.camera.x = initialCamera.x + movement.x;
+      Editor.camera.y = initialCamera.y + movement.y;
+    },
+    onSecondary(pointer) {
+      Editor.creatingNode = Editor.getWorldPosition(pointer);
+    },
   });
 
   const prevent = (e: Event) => e.preventDefault();
-
-  // @dani @hack Figure out a better way to do this shit
-  let lastSave;
-  let timer: NodeJS.Timeout;
-  $effect(() => {
-    clearTimeout(timer);
-    const current = JSON.stringify(Editor.nodes);
-    if (lastSave === current) {
-      return;
-    }
-    if (untrack(() => Editor.updatedFromServer)) {
-      return;
-    }
-    timer = setTimeout(() => {
-      Editor.save();
-    }, 1000);
-  });
 </script>
 
 <svelte:window
@@ -64,10 +50,10 @@
     class="viewport"
     style="left: {origin.x + Editor.camera.x}px; top: {origin.y + Editor.camera.y}px"
   >
-    {#each Editor.nodes as _, i}
-      <Node bind:data={Editor.nodes[i]} />
+    {#each Editor.nodes as data}
+      <Node {data} />
     {/each}
-    <AddNode />
+    <CreateNode />
     <EditNode />
   </div>
 </div>

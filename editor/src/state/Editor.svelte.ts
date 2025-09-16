@@ -1,17 +1,16 @@
-import { tick } from 'svelte';
-import { ResolutionStatus, Scenario, type INode as Node, type IScenario } from '../../../protocol/messages.js';
+import { Action, ResolutionStatus, Scenario, type IAction, type INode as Node, type IScenario } from '../../../protocol/messages.js';
+import { ProcessAction } from '../../../protocol/Actions';
 export { ResolutionStatus, type Node };
 import { User } from 'state/User.svelte';
 import { request } from 'state/Server';
 
-let addingNode = $state<{ x: number; y: number } | null>(null);
 let camera = $state({ x: 0, y: 0 });
+let creatingNode = $state<{ x: number; y: number } | null>(null);
 let editingNode = $state<{ id: string; x: number; y: number } | null>(null);
 let hasLoaded = $state(false);
 let id = $state<string>('');
 let nodes = $state<Node[]>([]);
 let socket = $state<WebSocket | null>(null);
-let updatedFromServer = $state(false);
 
 let wire = $state<{
   node: Node;
@@ -28,14 +27,13 @@ const onDisconnect = (e: CloseEvent) => {
 };
 
 export const Editor = {
-  get addingNode() { return addingNode },
-  set addingNode(value) { addingNode = value },
   get camera() { return camera },
+  get creatingNode() { return creatingNode },
+  set creatingNode(value) { creatingNode = value },
   get editingNode() { return editingNode },
   set editingNode(value) { editingNode = value },
   get hasLoaded() { return hasLoaded },
   get nodes() { return nodes },
-  get updatedFromServer() { return updatedFromServer },
   get wire() { return wire },
   set wire(value) { wire = value },
   async create() {
@@ -51,21 +49,24 @@ export const Editor = {
     socket = new WebSocket(`${__SERVER__}scenario/${scenario}?auth=${User.session}`);
     socket.binaryType = 'arraybuffer';
     socket.addEventListener('close', onDisconnect);
-    socket.addEventListener('message', ({ data: buffer }) => {
-      if (!hasLoaded) {
-        id = scenario;
-        hasLoaded = true;
-      }
-      updatedFromServer = true;
+    const onLoad = ({ data: buffer }: MessageEvent) => {
+      hasLoaded = true;
+      id = scenario;
       nodes = (Scenario.toObject(Scenario.decode(new Uint8Array(buffer))) as IScenario).nodes!;
-      tick().then(() => { updatedFromServer = false; });
-    });
+      socket!.removeEventListener('message', onLoad);
+      socket!.addEventListener('message', ({ data: buffer }) => {
+        const action = Action.decode(new Uint8Array(buffer));
+        ProcessAction(nodes, new Action(action));
+      });
+    };
+    socket.addEventListener('message', onLoad);
   },
-  async save() {
+  update(action: IAction) {
+    ProcessAction(nodes, new Action(action));
     if (!socket) {
       throw new Error('Not connected!');
     }
-    socket.send(Scenario.encode({ nodes }).finish());
+    socket.send(Action.encode(action).finish());
   },
   async remove() {
     await request({
@@ -82,8 +83,8 @@ export const Editor = {
     return scenarios;
   },
   unload() {
-    addingNode = null;
     camera = { x: 0, y: 0 };
+    creatingNode = null;
     editingNode = null;
     hasLoaded = false;
     id = '';
@@ -93,7 +94,6 @@ export const Editor = {
       socket.close();
       socket = null;
     }
-    updatedFromServer = false;
     wire = null;
   },
   getWorldPosition(position: { x: number; y: number }) {

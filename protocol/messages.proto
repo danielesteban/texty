@@ -41,6 +41,51 @@ message Scenario {
   repeated Node nodes = 1;
 }
 
+// Actions
+
+message SetBytes {
+  string id = 0;
+  bytes value = 1;
+}
+
+message SetChildString {
+  string id = 0;
+  uint32 child = 1;
+  string value = 2;
+}
+
+message SetPosition {
+  string id = 0;
+  NodePosition value = 1;
+}
+
+message SetString {
+  string id = 0;
+  string value = 1;
+}
+
+message SetResolutionStatus {
+  string id = 0;
+  ResolutionStatus value = 1;
+}
+
+message Action {
+  oneof type {
+    Node create = 0;
+    string remove = 1;
+    SetPosition setPosition = 2;
+    SetString setMessageText = 3;
+    SetChildString setMessageReponseText = 4;
+    SetChildString setMessageReponseNext = 5;
+    SetResolutionStatus setResolutionStatus = 6;
+    SetString setResolutionText = 7;
+    SetString setScenarioDescription = 8;
+    SetString setScenarioName = 9;
+    SetBytes setScenarioPhoto = 10;
+    SetString setScenarioStart = 11;
+  }
+}
+
 enum ResolutionStatus {
   BLOCKED = 0;
   DATE = 1;

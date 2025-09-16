@@ -4,12 +4,12 @@
   import { Editor, ResolutionStatus, type Node } from 'state/Editor.svelte';
   import { Lang } from 'state/Lang.svelte';
 
-  const addNode = (type: 'message' | 'resolution') => () => {
+  const createNode = (type: 'message' | 'resolution') => () => {
     let node: Node = {
       id: uuid(),
       position: {
-        x: Editor.addingNode!.x,
-        y: Editor.addingNode!.y,
+        x: Editor.creatingNode!.x,
+        y: Editor.creatingNode!.y,
       },
     };
     if (type === 'message') {
@@ -27,16 +27,18 @@
         status: ResolutionStatus.BLOCKED,
       };
     }
-    Editor.nodes.push(node);
-    Editor.addingNode = null;
+    Editor.update({
+      create: node,
+    });
+    Editor.creatingNode = null;
   };
 </script>
 
-<ContextMenu position={Editor.addingNode}>
-  <button onclick={addNode('message')}>
+<ContextMenu position={Editor.creatingNode}>
+  <button onclick={createNode('message')}>
     {Lang.current.message}
   </button>
-  <button onclick={addNode('resolution')}>
+  <button onclick={createNode('resolution')}>
     {Lang.current.resolution}
   </button>
 </ContextMenu>

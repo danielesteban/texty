@@ -7,7 +7,7 @@ import mongoose from 'mongoose';
 import { allowedOrigins, mongoURI, port } from 'core/Config';
 import setupErrorHandler from 'core/ErrorHandler';
 import setupServices from 'services';
-import { shutdownEditorSockets } from 'services/Scenario';
+import { saveEditors, shutdownEditors } from 'services/Scenario';
 
 mongoose.connect(mongoURI);
 
@@ -35,8 +35,9 @@ const server = app.listen(port, '0.0.0.0', (error) => {
 });
 
 const shutdown = () => {
-  shutdownEditorSockets();
+  shutdownEditors();
   server.close(async () => {
+    await saveEditors();
     await mongoose.connection.close();
     process.nextTick(() => process.exit(0));
   });

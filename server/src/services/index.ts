@@ -1,13 +1,11 @@
 
 import { type Application } from 'express-ws';
-import multer from 'multer';
 import nocache from 'nocache';
 import { requireAuth, requireAuthWS } from 'core/Auth';
 import * as Scenario from 'services/Scenario';
 import * as User from 'services/User';
 
 const preventCache = nocache();
-const upload = multer({ storage: multer.memoryStorage() });
 
 export default (app: Application) => {
   app.get(
@@ -40,22 +38,10 @@ export default (app: Application) => {
     Scenario.load
   );
 
-  app.put(
-    '/scenario/:id',
-    preventCache,
-    upload.single('data'),
-    requireAuth(Scenario.save)
-  );
-
   app.delete(
     '/scenario/:id',
     preventCache,
     requireAuth(Scenario.remove)
-  );
-
-  app.ws(
-    '/scenario/:id',
-    ...requireAuthWS(Scenario.editor),
   );
 
   app.get(
@@ -68,5 +54,10 @@ export default (app: Application) => {
     '/scenario/:id/photo',
     preventCache,
     Scenario.photo
+  );
+
+  app.ws(
+    '/scenario/:id',
+    ...requireAuthWS(Scenario.editor),
   );
 };
