@@ -38,6 +38,7 @@
 </div>
 <div class="text">
   <textarea
+    spellcheck={false}
     value={data.message!.text!}
     oninput={({ currentTarget: { value } }) => updateText(value)}
   ></textarea>
@@ -47,6 +48,7 @@
 {#each data.message!.responses! as response, index}
   <div class="connection response">
     <textarea
+      spellcheck={false}
       value={response.text!}
       oninput={({ currentTarget: { value } }) => updateResponseText(index, value)}
     ></textarea>

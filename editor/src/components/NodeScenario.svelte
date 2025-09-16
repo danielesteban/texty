@@ -53,6 +53,7 @@
 <div class="connection">
   <input
     type="text"
+    spellcheck={false}
     value={data.scenario!.name!}
     oninput={({ currentTarget: { value } }) => updateName(value)}
   />

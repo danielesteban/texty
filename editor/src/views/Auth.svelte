@@ -42,6 +42,7 @@
       <input
         bind:value={name}
         type="text"
+        spellcheck={false}
         placeholder={Lang.current.username}
         autocomplete="username"
       />
@@ -50,6 +51,7 @@
       <input
         bind:value={password}
         type="password"
+        spellcheck={false}
         placeholder={Lang.current.password}
         autocomplete={isSignUp ? 'new-password' : 'current-password'}
       />
@@ -59,6 +61,7 @@
         <input
           bind:value={confirmPassword}
           type="password"
+          spellcheck={false}
           placeholder={Lang.current.confirmPassword}
           autocomplete="new-password"
         />

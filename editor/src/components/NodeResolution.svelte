@@ -47,6 +47,7 @@
 <label>{Lang.current.message}</label>
 <div class="text">
   <textarea
+    spellcheck={false}
     value={data.resolution!.text!}
     oninput={({ currentTarget: { value } }) => updateText(value)}
   ></textarea>
