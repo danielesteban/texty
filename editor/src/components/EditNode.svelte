@@ -7,6 +7,7 @@
     Editor.update({
       remove: Editor.editingNode!.id,
     });
+    Editor.editingNode = null;
   };
 </script>
 
