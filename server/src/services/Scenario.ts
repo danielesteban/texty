@@ -224,6 +224,7 @@ class Editor {
       peer.isAlive = false;
       peer.ping(() => {});
     });
+    return !!this.peers.length || !!this.saveTimer || !!this.saving;
   }
 
   shutdown() {
@@ -231,7 +232,6 @@ class Editor {
   }
 
   private async save() {
-    delete this.saveTimer;
     if (!this.data) {
       throw new Error('Data is not loaded');
     }
@@ -243,13 +243,21 @@ class Editor {
 
   private debounceSave() {
     if (!this.saveTimer) {
-      this.saveTimer = setTimeout(() => this.save(), 1000);
+      this.saveTimer = setTimeout(() => {
+        delete this.saveTimer;
+        if (this.saving) {
+          this.debounceSave();
+        } else {
+          this.save();
+        }
+      }, 1000);
     }
   }
 
   async forceSave() {
     if (this.saveTimer) {
       clearTimeout(this.saveTimer);
+      delete this.saveTimer;
       await this.save();
     }
     if (this.saving) {
@@ -260,7 +268,11 @@ class Editor {
 
 const editors = new Map<string, Editor>();
 const pingInterval = setInterval(() => (
-  editors.forEach((editor) => editor.ping())
+  editors.forEach((editor, id) => {
+    if (!editor.ping()) {
+      editors.delete(id);
+    }
+  })
 ), 30000);
 
 export const shutdownEditors = async () => {
