@@ -22,7 +22,7 @@ export const ProcessAction = (nodes: Node[], action: Action) => {
       nodes.push(action.create!);
       break;
     case 'remove': {
-      const node = nodes.findIndex(({ id }) => id === action.remove!);
+      const node = nodes.findIndex((node) => node.id === action.remove! && !node.scenario);
       if (node === -1) {
         throw new Error("Couldn't find node");
       }

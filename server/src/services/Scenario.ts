@@ -35,7 +35,7 @@ const loadScenario = (id: string) => (
 
 const saveScenario = (id: string, data: Protocol) => {
   const scenario: IScenario = Protocol.toObject(data);
-  const scenarioNode = scenario.nodes!.find(({ id }) => id === 'scenario');
+  const scenarioNode = scenario.nodes?.find(({ id }) => id === 'scenario');
   if (!scenarioNode) {
     throw new Error("Couldn't find the scenario node");
   }

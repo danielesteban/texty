@@ -29,6 +29,9 @@
       });
     },
     onSecondary(pointer) {
+      if (data.scenario) {
+        return;
+      }
       Editor.editingNode = {
         id: data.id!,
         ...Editor.getWorldPosition(pointer),
