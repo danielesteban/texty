@@ -2,6 +2,7 @@
   import iPhone from 'assets/iphone.png';
   import { Game as GameState } from 'state/Game.svelte';
   import Game from 'views/Game.svelte';
+  import Loading from 'views/Loading.svelte';
   import Menu from 'views/Menu.svelte';
 
   const router = () => {
@@ -24,7 +25,9 @@
 
 <div class="app">
   <div class="phone" style="--background-image: url({iPhone})">
-    {#if GameState.hasLoaded}
+    {#if GameState.isLoading}
+      <Loading />
+    {:else if GameState.hasLoaded}
       <Game />
     {:else}
       <Menu />

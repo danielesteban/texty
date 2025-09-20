@@ -18,5 +18,8 @@
       "esbuild",
       "protobufjs"
     ]
+  },
+  "dependencies": {
+    "spin.js": "^4.1.2"
   }
 }

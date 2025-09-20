@@ -2,6 +2,7 @@
   import { User } from 'state/User.svelte';
   import Auth from 'views/Auth.svelte';
   import Editor from 'views/Editor.svelte';
+  import Loading from 'views/Loading.svelte';
   import Menu from 'views/Menu.svelte';
   import { Editor as EditorState } from 'state/Editor.svelte';
 
@@ -24,6 +25,8 @@
 
 {#if !User.session}
   <Auth />
+{:else if EditorState.isLoading}
+  <Loading />
 {:else if EditorState.hasLoaded}
   <Editor />
 {:else}

@@ -4,6 +4,7 @@ import { ResolutionStatus, Scenario, type INode as Node, type INodeMessageRespon
 export { ResolutionStatus };
 
 let hasLoaded = $state(false);
+let isLoading = $state(false);
 let isTyping = $state(false);
 
 let nodes = $state<Node[]>([]);
@@ -50,6 +51,7 @@ const loadNode = async (id: string) => {
 
 export const Game = {
   get hasLoaded() { return hasLoaded },
+  get isLoading() { return isLoading },
   get isTyping() { return isTyping },
   get messages() { return messages },
   get resolution() { return resolution },
@@ -58,6 +60,7 @@ export const Game = {
   get selected() { return selected },
   set selected(value) { selected = value; },
   async load(id: string) {
+    isLoading = true;
     const res = await fetch(`${__SERVER__}scenario/${id}`);
     if (!res.ok) {
       throw new Error(res.statusText);
@@ -67,6 +70,7 @@ export const Game = {
     nodes = parsed.nodes!;
     scenario = nodes.find((node) => !!node.scenario)!;
     hasLoaded = true;
+    isLoading = false;
     loadNode(scenario.scenario!.start!);
   },
   respond(response: INodeMessageResponses) {
@@ -80,6 +84,7 @@ export const Game = {
   },
   unload() {
     hasLoaded = false;
+    isLoading = false;
     isTyping = false;
     nodes = [];
     messages = [];

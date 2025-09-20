@@ -8,6 +8,7 @@ let camera = $state({ x: 0, y: 0 });
 let creatingNode = $state<{ x: number; y: number } | null>(null);
 let editingNode = $state<{ id: string; x: number; y: number } | null>(null);
 let hasLoaded = $state(false);
+let isLoading = $state(false);
 let id = $state<string>('');
 let nodes = $state<Node[]>([]);
 let origin = $state({ x: 0, y: 0 });
@@ -33,6 +34,7 @@ export const Editor = {
   get editingNode() { return editingNode },
   set editingNode(value) { editingNode = value },
   get hasLoaded() { return hasLoaded },
+  get isLoading() { return isLoading },
   get nodes() { return nodes },
   get origin() { return origin },
   get wire() { return wire },
@@ -50,8 +52,10 @@ export const Editor = {
     socket = new WebSocket(`${__SERVER__}scenario/${scenario}?auth=${User.session}`);
     socket.binaryType = 'arraybuffer';
     socket.addEventListener('close', onDisconnect);
+    isLoading = true;
     const onLoad = ({ data: buffer }: MessageEvent) => {
       hasLoaded = true;
+      isLoading = false;
       id = scenario;
       nodes = (Scenario.toObject(Scenario.decode(new Uint8Array(buffer))) as IScenario).nodes!;
       socket!.removeEventListener('message', onLoad);
@@ -88,6 +92,7 @@ export const Editor = {
     creatingNode = null;
     editingNode = null;
     hasLoaded = false;
+    isLoading = false;
     id = '';
     nodes = [];
     if (socket) {
