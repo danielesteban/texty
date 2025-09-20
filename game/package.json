@@ -8,10 +8,10 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^6.2.0",
-    "@types/node": "^24.3.2",
-    "svelte": "^5.38.10",
+    "@types/node": "^24.5.2",
+    "svelte": "^5.39.3",
     "typescript": "^5.9.2",
-    "vite": "^7.1.5"
+    "vite": "^7.1.6"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
