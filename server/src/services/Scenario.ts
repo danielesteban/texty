@@ -86,7 +86,7 @@ export const create = [
         nodes: [
           {
             id: 'scenario',
-            position: { x: -640, y: -254 },
+            position: { x: -640, y: -233 },
             scenario: {},
           },
         ],

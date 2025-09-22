@@ -15,7 +15,7 @@
       {Lang.current.selectScenario}
     </div>
     <div class="scenarios">
-      {#each scenarios as scenario}
+      {#each scenarios as scenario (scenario._id)}
         <a class="scenario" href={`#/${scenario._id}`}>
           <button>
             <!-- svelte-ignore a11y_missing_attribute -->
@@ -26,6 +26,10 @@
             </div>
           </button>
         </a>
+      {:else}
+        <div class="empty">
+          {Lang.current.emptyScenarios}
+        </div>
       {/each}
     </div>
     <button
@@ -60,6 +64,13 @@
     justify-content: center;
     font-size: 1rem;
     line-height: 1.5rem;
+  }
+
+  .empty {
+    display: grid;
+    justify-content: center;
+    color: #999;
+    padding: 1rem 0;
   }
 
   .scenarios {

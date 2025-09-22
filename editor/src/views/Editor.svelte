@@ -49,7 +49,7 @@
     class="viewport"
     style="left: {Editor.origin.x + Editor.camera.x}px; top: {Editor.origin.y + Editor.camera.y}px"
   >
-    {#each Editor.nodes as data}
+    {#each Editor.nodes as data (data.id)}
       <Node {data} />
     {/each}
     <CreateNode />

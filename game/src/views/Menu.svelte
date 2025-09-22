@@ -20,7 +20,7 @@
     {Lang.current.selectScenario}
   </div>
   <div class="scenarios">
-    {#each scenarios as scenario}
+    {#each scenarios as scenario (scenario._id)}
       <a class="scenario" href={`#/${scenario._id}`}>
         <button>
           <!-- svelte-ignore a11y_missing_attribute -->

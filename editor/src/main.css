@@ -53,6 +53,10 @@ button {
   padding: 0.5rem;
 }
 
+button > svg {
+  pointer-events: none;
+}
+
 canvas {
   vertical-align: middle;
 }
