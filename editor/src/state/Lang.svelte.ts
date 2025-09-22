@@ -10,6 +10,7 @@ const en = {
   emptyScenarios: 'You haven\'t created any scenarios yet.',
   friendzoned: 'Friendzoned',
   message: 'Message',
+  name: 'Name',
   password: 'Password',
   responses: 'Responses',
   rejected: 'Rejected',
@@ -23,7 +24,6 @@ const en = {
   signinAlternative: 'Need an account?',
   signinError: 'Error signing in',
   status: 'Status',
-  title: 'Title',
   username: 'Username',
 };
 
@@ -39,6 +39,7 @@ const es = {
   emptyScenarios: 'Aún no has creado ningún escenario.',
   friendzoned: 'Friendzoned',
   message: 'Mensaje',
+  name: 'Nombre',
   password: 'Contraseña',
   responses: 'Respuestas',
   rejected: 'Rechazado',
@@ -52,7 +53,6 @@ const es = {
   signinAlternative: 'Necesitas una cuenta?',
   signinError: 'Error iniciando sesión',
   status: 'Estado',
-  title: 'Título',
   username: 'Usuario',
 };
 

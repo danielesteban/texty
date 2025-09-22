@@ -75,7 +75,7 @@
   </div>
 </div>
 <!-- svelte-ignore a11y_label_has_associated_control -->
-<label>{Lang.current.title}</label>
+<label>{Lang.current.name}</label>
 <div class="connection">
   <input
     type="text"
