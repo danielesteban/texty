@@ -2,7 +2,7 @@ import { Action, ResolutionStatus, Scenario, type IAction, type INode as Node, t
 import { ProcessAction } from '../../../protocol/Actions';
 export { ResolutionStatus, type Node };
 import { User } from 'state/User.svelte';
-import { request } from 'state/Server';
+import { connect, request } from 'state/Server';
 
 let camera = $state({ x: 0, y: 0 });
 let creatingNode = $state<{ x: number; y: number } | null>(null);
@@ -49,7 +49,10 @@ export const Editor = {
   },
   async load(scenario: string) {
     this.unload();
-    socket = new WebSocket(`${__SERVER__}scenario/${scenario}?auth=${User.session}`);
+    socket = connect({
+      endpoint: `scenario/${scenario}`,
+      session: User.session!,
+    });
     socket.binaryType = 'arraybuffer';
     socket.addEventListener('close', onDisconnect);
     isLoading = true;

@@ -1,3 +1,14 @@
+export const connect = ({
+  endpoint,
+  session,
+}: {
+  endpoint: string;
+  session?: string;
+}) => {
+  const url = new URL(`${__SERVER__}${endpoint}${session ? `?auth=${session}` : ''}`);
+  return new WebSocket(`ws${url.protocol === 'https:' ? 's' : ''}://${url.host}${url.pathname}${url.search}`);
+};
+
 export const request = ({
   endpoint,
   body,
