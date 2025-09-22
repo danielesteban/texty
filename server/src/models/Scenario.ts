@@ -1,9 +1,11 @@
 
-import { model, Schema, type HydratedDocument } from 'mongoose';
+import { model, Schema, type HydratedDocument, type Types } from 'mongoose';
 
 interface Scenario {
-  name: string;
+  collaborators: Types.ObjectId[];
+  creator: Types.ObjectId;
   description: string;
+  name: string;
   nodes: Buffer;
   photo: Buffer;
   createdAt: Date;
@@ -13,11 +15,23 @@ interface Scenario {
 export type ScenarioDocument = HydratedDocument<Scenario>;
 
 const ScenarioSchema = new Schema<Scenario>({
-  name: {
+  collaborators: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    index: true,
+  }],
+  creator: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    index: true,
+  },
+  description: {
     type: String,
     required: true,
   },
-  description: {
+  name: {
     type: String,
     required: true,
   },
@@ -29,6 +43,8 @@ const ScenarioSchema = new Schema<Scenario>({
     type: Buffer,
     required: true,
   },
+  createdAt: { type: Date, index: -1 },
+  updatedAt: Date,
 }, { timestamps: true });
 
 export const Scenario = model<Scenario>('Scenario', ScenarioSchema);

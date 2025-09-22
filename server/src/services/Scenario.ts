@@ -1,12 +1,13 @@
 import { badRequest, notFound } from '@hapi/boom';
 import { type NextFunction, type Request, type Response } from 'express';
 import { param } from 'express-validator';
+import { type Types as MongooseTypes } from 'mongoose';
 import { v4 as uuid } from 'uuid';
 import validator from 'validator';
 import { type WebSocket } from 'ws';
 import { type AuthorizedRequest } from 'core/Auth';
 import { checkValidationResult } from 'core/ErrorHandler';
-import { Scenario } from 'models';
+import { Scenario, User, type UserDocument } from 'models';
 import { ProcessAction } from '../../../protocol/Actions';
 import { Action, Scenario as Protocol, type IScenario } from '../../../protocol/messages.js';
 
@@ -15,7 +16,9 @@ const defaultPhoto = Buffer.from('/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAg
 const loadScenario = (id: string) => (
   Scenario
     .findById(id)
-    .select('name description nodes photo')
+    .select('creator collaborators description name nodes photo')
+    .populate<{ creator: UserDocument }>('creator', '-_id name')
+    .populate<{ collaborators: UserDocument[] }>('collaborators', '-_id name')
     .lean()
     .then((scenario) => {
       if (!scenario) {
@@ -26,26 +29,43 @@ const loadScenario = (id: string) => (
       if (!scenarioNode) {
         throw new Error("Couldn't find the scenario node");
       }
-      scenarioNode.scenario!.name = scenario.name;
+      scenarioNode.scenario!.creator = scenario.creator.name;
+      scenarioNode.scenario!.collaborators = scenario.collaborators.map(({ name }) => name);
       scenarioNode.scenario!.description = scenario.description;
+      scenarioNode.scenario!.name = scenario.name;
       scenarioNode.scenario!.photo = scenario.photo.buffer;
       return data;
     })
 );
 
-const saveScenario = (id: string, data: Protocol) => {
-  const scenario: IScenario = Protocol.toObject(data);
+const saveScenario = async (id: string, data: Protocol) => {
+  const scenario: IScenario = Protocol.toObject(data, { defaults: true });
   const scenarioNode = scenario.nodes?.find(({ id }) => id === 'scenario');
   if (!scenarioNode) {
     throw new Error("Couldn't find the scenario node");
   }
-  const { description, name, photo } = scenarioNode.scenario!;
-  delete scenarioNode.scenario!.name;
+  const { collaborators, description, name, photo } = scenarioNode.scenario!;
+  delete scenarioNode.scenario!.creator;
+  delete scenarioNode.scenario!.collaborators;
   delete scenarioNode.scenario!.description;
+  delete scenarioNode.scenario!.name;
   delete scenarioNode.scenario!.photo;
+  const users = collaborators ? (
+    await User
+      .find({ name: { $in: collaborators } })
+      .select('name')
+      .exec()
+  ) : [];
   return Scenario
     .updateOne({ _id: id }, {
       $set: {
+        collaborators: collaborators!.reduce<MongooseTypes.ObjectId[]>((collaborators, name) => {
+          const user = users.find((user) => user.name === name);
+          if (user) {
+            collaborators.push(user._id);
+          }
+          return collaborators;
+        }, []),
         name,
         description,
         nodes: Buffer.from(Protocol.encode(scenario).finish()),
@@ -56,15 +76,17 @@ const saveScenario = (id: string, data: Protocol) => {
 };
 
 export const create = [
-  (_: AuthorizedRequest, res: Response, next: NextFunction) => {
+  (req: AuthorizedRequest, res: Response, next: NextFunction) => {
     const scenario = new Scenario({
-      name: 'New Scenario',
+      collaborators: [],
+      creator: req.user._id,
       description: '',
+      name: 'New Scenario',
       nodes: Buffer.from(Protocol.encode(new Protocol({
         nodes: [
           {
             id: 'scenario',
-            position: { x: -640, y: -150 },
+            position: { x: -640, y: -254 },
             scenario: {},
           },
         ],
@@ -93,9 +115,6 @@ export const load = [
   },
 ];
 
-// @dani
-// Same for this. This will desync the editor peers.
-// Let's refactor it later into the WS endpoint when it's actually used in the UI.
 export const remove = [
   param('id')
     .isMongoId(),
@@ -104,23 +123,42 @@ export const remove = [
     Scenario
       .deleteOne({ _id: req.params.id })
       .then(() => {
+        const editor = editors.get(req.params.id);
+        if (editor) {
+          editor.shutdown();
+          editors.delete(req.params.id);
+        }
         res.status(200).end();
       })
       .catch(next);
   },
 ];
 
-export const list = (_: Request, res: Response, next: NextFunction) => {
+export const listAll = (_: Request, res: Response, next: NextFunction) => {
   Scenario
     .find()
     .select('name description')
-    .sort({ createdAt: 1 })
+    .sort({ createdAt: -1 })
     .lean()
     .then((scenarios) => (
       res.json(scenarios)
     ))
     .catch(next);
 };
+
+export const listEditable = [
+  (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+    Scenario
+      .find({ $or: [{ creator: req.user._id }, { collaborators: req.user._id }] })
+      .select('name description')
+      .sort({ createdAt: -1 })
+      .lean()
+      .then((scenarios) => (
+        res.json(scenarios)
+      ))
+      .catch(next);
+  },
+];
 
 export const photo = [
   param('id')
@@ -171,7 +209,7 @@ class Editor {
     this.id = id;
   }
 
-  async addPeer(ws: WebSocket) {
+  async addPeer(ws: WebSocket, user: UserDocument) {
     if (this.loading) {
       await this.loading;
     } else if (!this.data) {
@@ -182,6 +220,17 @@ class Editor {
       await this.loading;
     }
     if (ws.readyState !== ws.OPEN) {
+      return;
+    }
+    const scenarioNode = this.data.nodes.find(({ id }) => id === 'scenario');
+    if (!scenarioNode) {
+      throw new Error("Couldn't find the scenario node");
+    }
+    if (!(
+      user.name === scenarioNode.scenario!.creator!
+      || scenarioNode.scenario!.collaborators!.includes(user.name)
+    )) {
+      ws.terminate();
       return;
     }
     const { data, peers } = this;
@@ -224,7 +273,7 @@ class Editor {
       peer.isAlive = false;
       peer.ping(() => {});
     });
-    return !!this.peers.length || !!this.saveTimer || !!this.saving;
+    return !!this.loading || !!this.peers.length || !!this.saveTimer || !!this.saving;
   }
 
   shutdown() {
@@ -297,6 +346,6 @@ export const editor = [
       editor = new Editor(req.params.id);
       editors.set(req.params.id, editor);
     }
-    editor.addPeer(ws);
+    editor.addPeer(ws, req.user);
   },
 ];

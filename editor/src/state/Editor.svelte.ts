@@ -57,7 +57,7 @@ export const Editor = {
       hasLoaded = true;
       isLoading = false;
       id = scenario;
-      nodes = (Scenario.toObject(Scenario.decode(new Uint8Array(buffer))) as IScenario).nodes!;
+      nodes = (Scenario.toObject(Scenario.decode(new Uint8Array(buffer)), { defaults: true }) as IScenario).nodes!;
       socket!.removeEventListener('message', onLoad);
       socket!.addEventListener('message', ({ data: buffer }) => {
         const action = Action.decode(new Uint8Array(buffer));
@@ -72,11 +72,11 @@ export const Editor = {
       method: 'DELETE',
       session: User.session!,
     });
-    location.hash = '/';
   },
   async list() {
     const scenarios = await request({
-      endpoint: `scenarios`,
+      endpoint: `scenarios/user`,
+      session: User.session!,
     });
     return scenarios;
   },

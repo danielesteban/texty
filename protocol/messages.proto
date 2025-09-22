@@ -16,10 +16,12 @@ message NodeResolution {
 }
 
 message NodeScenario {
-  string description = 1;
-  string name = 2;
-  bytes photo = 3;
-  optional string start = 4;
+  string creator = 1;
+  string description = 2;
+  string name = 3;
+  bytes photo = 4;
+  optional string start = 5;
+  repeated string collaborators = 6;
 }
 
 message NodePosition {
@@ -79,10 +81,12 @@ message Action {
     SetChildString setMessageReponseNext = 5;
     SetResolutionStatus setResolutionStatus = 6;
     SetString setResolutionText = 7;
-    SetString setScenarioDescription = 8;
-    SetString setScenarioName = 9;
-    SetBytes setScenarioPhoto = 10;
-    SetString setScenarioStart = 11;
+    SetString addScenarioCollaborator = 8;
+    SetString removeScenarioCollaborator = 9;
+    SetString setScenarioDescription = 10;
+    SetString setScenarioName = 11;
+    SetBytes setScenarioPhoto = 12;
+    SetString setScenarioStart = 13;
   }
 }
 

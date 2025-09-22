@@ -66,7 +66,7 @@ export const Game = {
       throw new Error(res.statusText);
     }
     const data = await res.arrayBuffer();
-    const parsed = Scenario.toObject(Scenario.decode(new Uint8Array(data))) as IScenario;
+    const parsed = Scenario.toObject(Scenario.decode(new Uint8Array(data)), { defaults: true }) as IScenario;
     nodes = parsed.nodes!;
     scenario = nodes.find((node) => !!node.scenario)!;
     hasLoaded = true;

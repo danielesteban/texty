@@ -61,6 +61,26 @@ export const ProcessAction = (nodes: Node[], action: Action) => {
     case 'setResolutionText':
       getNode(nodes, action.setResolutionText!.id!).resolution!.text = action.setResolutionText!.value!;
       break;
+    case 'addScenarioCollaborator': {
+      const node = getNode(nodes, action.addScenarioCollaborator!.id!).scenario!;
+      if (node.creator === action.addScenarioCollaborator!.value!) {
+        throw new Error("Creator can't be a collaborator");
+      }
+      if (node.collaborators!.includes(action.addScenarioCollaborator!.value!)) {
+        throw new Error('User is already a collaborator');
+      }
+      node.collaborators!.push(action.addScenarioCollaborator!.value!);
+      break;
+    }
+    case 'removeScenarioCollaborator': {
+      const collaborators = getNode(nodes, action.removeScenarioCollaborator!.id!).scenario!.collaborators!;
+      const index = collaborators.indexOf(action.removeScenarioCollaborator!.value!);
+      if (index === -1) {
+        throw new Error("Couldn't find collaborator");
+      }
+      collaborators.splice(index, 1);
+      break;
+    }
     case 'setScenarioDescription':
       getNode(nodes, action.setScenarioDescription!.id!).scenario!.description = action.setScenarioDescription!.value!;
       break;

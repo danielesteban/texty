@@ -47,7 +47,13 @@ export default (app: Application) => {
   app.get(
     '/scenarios',
     preventCache,
-    Scenario.list
+    Scenario.listAll
+  );
+
+  app.get(
+    '/scenarios/user',
+    preventCache,
+    requireAuth(Scenario.listEditable)
   );
 
   app.get(
