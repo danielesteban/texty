@@ -252,7 +252,7 @@ class Editor {
       }
       try {
         const action = Action.decode(new Uint8Array(buffer));
-        ProcessAction(data.nodes, new Action(action));
+        ProcessAction(data.nodes, action);
       } catch (err) {
         if (process.env.NODE_ENV === 'development') {
           console.error(err);

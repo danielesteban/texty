@@ -64,7 +64,7 @@ export const Editor = {
       socket!.removeEventListener('message', onLoad);
       socket!.addEventListener('message', ({ data: buffer }) => {
         const action = Action.decode(new Uint8Array(buffer));
-        ProcessAction(nodes, new Action(action));
+        ProcessAction(nodes, action);
       });
     };
     socket.addEventListener('message', onLoad);
