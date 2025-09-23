@@ -1,6 +1,6 @@
-import { Action, ResolutionStatus, Scenario, type IAction, type INode as Node, type IScenario } from '../../../protocol/messages.js';
+import { Action, Language, ResolutionStatus, Scenario, type IAction, type INode as Node, type IScenario } from '../../../protocol/messages.js';
 import { ProcessAction } from '../../../protocol/Actions';
-export { ResolutionStatus, type Node };
+export { Language, ResolutionStatus, type Node };
 import { User } from 'state/User.svelte';
 import { connect, request } from 'state/Server';
 

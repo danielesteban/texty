@@ -87,6 +87,9 @@ export const ProcessAction = (nodes: Node[], action: Action) => {
     case 'setScenarioDescription':
       getNode(nodes, action.setScenarioDescription!.id!).scenario!.description = action.setScenarioDescription!.value!;
       break;
+    case 'setScenarioLanguage':
+      getNode(nodes, action.setScenarioLanguage!.id!).scenario!.language = action.setScenarioLanguage!.value!;
+      break;
     case 'setScenarioName':
       getNode(nodes, action.setScenarioName!.id!).scenario!.name = action.setScenarioName!.value!;
       break;

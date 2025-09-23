@@ -2,7 +2,7 @@
   import Connector from 'components/Connector.svelte';
   import Image from 'components/Image.svelte';
   import { ResizeImage } from 'helpers/ResizeImage';
-  import { Editor, type Node } from 'state/Editor.svelte';
+  import { Editor, Language, type Node } from 'state/Editor.svelte';
   import { Lang } from 'state/Lang.svelte';
   import { User } from 'state/User.svelte';
 
@@ -23,6 +23,15 @@
   const updateDescription = (value: string) => {
     Editor.update({
       setScenarioDescription: {
+        id: data.id!,
+        value,
+      },
+    });
+  };
+
+  const updateLanguage = (value: Language) => {
+    Editor.update({
+      setScenarioLanguage: {
         id: data.id!,
         value,
       },
@@ -102,12 +111,21 @@
   ></textarea>
 </div>
 <!-- svelte-ignore a11y_label_has_associated_control -->
+<label>{Lang.current.language}</label>
+<select
+  value={data.scenario!.language!}
+  onchange={({ currentTarget: { value } }) => updateLanguage(parseInt(value, 10))}
+>
+  <option value={Language.EN}>English</option>
+  <option value={Language.ES}>Castellano</option>
+</select>
+<!-- svelte-ignore a11y_label_has_associated_control -->
 <label>{Lang.current.creator}</label>
-<div>
+<div class="user">
   {data.scenario!.creator}
 </div>
 <!-- svelte-ignore a11y_label_has_associated_control -->
-<label class="collaborators">
+<label class="add">
   {Lang.current.collaborators}
   <!-- svelte-ignore a11y_consider_explicit_label -->
   <button onclick={addCollaborator}>
@@ -116,26 +134,28 @@
     </svg>
   </button>
 </label>
-{#each data.scenario!.collaborators! as collaborator}
-  <div class="collaborator">
-    <div>
-      {collaborator}
+<div class="collaborators">
+  {#each data.scenario!.collaborators! as collaborator}
+    <div class="collaborator">
+      <div class="user">
+        {collaborator}
+      </div>
+      <!-- svelte-ignore a11y_consider_explicit_label -->
+      <button
+        disabled={collaborator === User.name}
+        onclick={removeCollaborator(collaborator)}
+      >
+        <svg width="1rem" height="1rem" viewBox="-6.5 -3 25 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.383 13.644A1.03 1.03 0 0 1 9.928 15.1L6 11.172 2.072 15.1a1.03 1.03 0 1 1-1.455-1.456l3.928-3.928L.617 5.79a1.03 1.03 0 1 1 1.455-1.456L6 8.261l3.928-3.928a1.03 1.03 0 0 1 1.455 1.456L7.455 9.716z"/>
+        </svg>
+      </button>
     </div>
-    <!-- svelte-ignore a11y_consider_explicit_label -->
-    <button
-      disabled={collaborator === User.name}
-      onclick={removeCollaborator(collaborator)}
-    >
-      <svg width="1rem" height="1rem" viewBox="-6.5 -3 25 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M11.383 13.644A1.03 1.03 0 0 1 9.928 15.1L6 11.172 2.072 15.1a1.03 1.03 0 1 1-1.455-1.456l3.928-3.928L.617 5.79a1.03 1.03 0 1 1 1.455-1.456L6 8.261l3.928-3.928a1.03 1.03 0 0 1 1.455 1.456L7.455 9.716z"/>
-      </svg>
-    </button>
-  </div>
-{:else}
-  <div class="empty">
-    {Lang.current.emptyCollaborators}
-  </div>
-{/each}
+  {:else}
+    <div class="empty">
+      {Lang.current.emptyCollaborators}
+    </div>
+  {/each}
+</div>
 
 <style>
   .connection {
@@ -160,6 +180,21 @@
     overflow: hidden;
   }
   
+  .user {
+    padding: 0 0.5rem;
+  }
+
+  .add {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .add > button {
+    color: #eee;
+    padding: 0;
+  }
+
   .empty {
     display: grid;
     justify-content: center;
@@ -168,14 +203,9 @@
   }
 
   .collaborators {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-  }
-
-  .collaborators > button {
-    color: #eee;
-    padding: 0;
+    display: grid;
+    align-content: flex-start;
+    gap: 0.25rem;
   }
 
   .collaborator {
@@ -185,6 +215,11 @@
   }
 
   .collaborator > button {
+    display: none;
     padding: 0;
+  }
+
+  .collaborator:hover > button {
+    display: flex;
   }
 </style>

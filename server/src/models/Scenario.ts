@@ -1,10 +1,12 @@
 
 import { model, Schema, type HydratedDocument, type Types } from 'mongoose';
+import { Language } from '../../../protocol/messages.js';
 
 interface Scenario {
   collaborators: Types.ObjectId[];
   creator: Types.ObjectId;
   description: string;
+  language: Language;
   name: string;
   nodes: Buffer;
   photo: Buffer;
@@ -19,7 +21,6 @@ const ScenarioSchema = new Schema<Scenario>({
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-    index: true,
   }],
   creator: {
     type: Schema.Types.ObjectId,
@@ -30,6 +31,12 @@ const ScenarioSchema = new Schema<Scenario>({
   description: {
     type: String,
     required: true,
+  },
+  language: {
+    type: Number,
+    enum: Object.values(Language),
+    required: true,
+    index: true,
   },
   name: {
     type: String,

@@ -18,10 +18,11 @@ message NodeResolution {
 message NodeScenario {
   string creator = 1;
   string description = 2;
-  string name = 3;
-  bytes photo = 4;
-  optional string start = 5;
-  repeated string collaborators = 6;
+  Language language = 3;
+  string name = 4;
+  bytes photo = 5;
+  optional string start = 6;
+  repeated string collaborators = 7;
 }
 
 message NodePosition {
@@ -56,6 +57,11 @@ message SetChildString {
   string value = 2;
 }
 
+message SetLanguage {
+  string id = 0;
+  Language value = 1;
+}
+
 message SetPosition {
   string id = 0;
   NodePosition value = 1;
@@ -84,10 +90,16 @@ message Action {
     SetString addScenarioCollaborator = 8;
     SetString removeScenarioCollaborator = 9;
     SetString setScenarioDescription = 10;
-    SetString setScenarioName = 11;
-    SetBytes setScenarioPhoto = 12;
-    SetString setScenarioStart = 13;
+    SetLanguage setScenarioLanguage = 11;
+    SetString setScenarioName = 12;
+    SetBytes setScenarioPhoto = 13;
+    SetString setScenarioStart = 14;
   }
+}
+
+enum Language {
+  EN = 0;
+  ES = 1;
 }
 
 enum ResolutionStatus {
