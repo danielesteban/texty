@@ -1,6 +1,6 @@
 import { badRequest, notFound } from '@hapi/boom';
 import { type NextFunction, type Request, type Response } from 'express';
-import { param } from 'express-validator';
+import { matchedData, param } from 'express-validator';
 import { type Types as MongooseTypes } from 'mongoose';
 import { v4 as uuid } from 'uuid';
 import validator from 'validator';
@@ -107,7 +107,8 @@ export const load = [
     .isMongoId(),
   checkValidationResult,
   (req: Request, res: Response, next: NextFunction) => {
-    loadScenario(req.params.id)
+    const { id } = matchedData<{ id: string }>(req);
+    loadScenario(id)
       .then((data) => {
         res.send(Buffer.from(Protocol.encode(data).finish()));
       })
@@ -120,13 +121,14 @@ export const remove = [
     .isMongoId(),
   checkValidationResult,
   (req: Request, res: Response, next: NextFunction) => {
+    const { id } = matchedData<{ id: string }>(req);
     Scenario
-      .deleteOne({ _id: req.params.id })
+      .deleteOne({ _id: id })
       .then(() => {
-        const editor = editors.get(req.params.id);
+        const editor = editors.get(id);
         if (editor) {
           editor.shutdown();
-          editors.delete(req.params.id);
+          editors.delete(id);
         }
         res.status(200).end();
       })
@@ -165,8 +167,9 @@ export const photo = [
     .isMongoId(),
   checkValidationResult,
   (req: Request, res: Response, next: NextFunction) => {
+    const { id } = matchedData<{ id: string }>(req);
     Scenario
-      .findById(req.params.id)
+      .findById(id)
       .select('updatedAt')
       .lean()
       .then((scenario) => {

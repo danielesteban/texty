@@ -58,4 +58,13 @@ export const User = {
     });
     set(user);
   },
+  async search(name: string) {
+    const users = await request({
+      body: { name },
+      endpoint: 'users',
+      method: 'POST',
+      session: session!,
+    });
+    return users;
+  },
 };

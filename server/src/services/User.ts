@@ -59,3 +59,21 @@ export const register = [
       ));
   },
 ];
+
+export const search = [
+  body('name')
+    .trim()
+    .isLength({ min: 3, max: 15 }),
+  checkValidationResult,
+  (req: Request, res: Response, next: NextFunction) => {
+    const { name } = matchedData<{ name: string }>(req);
+    User
+      .find({ name: { $regex: `^${name}`, $options: 'i' } })
+      .select('-_id name')
+      .lean()
+      .then((users) => {
+        res.json(users.map(({ name }) => name));
+      })
+      .catch(next);
+  },
+];

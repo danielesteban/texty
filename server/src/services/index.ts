@@ -27,6 +27,12 @@ export default (app: Application) => {
   );
 
   app.post(
+    '/users',
+    preventCache,
+    requireAuth(User.search)
+  );
+
+  app.post(
     '/scenario',
     preventCache,
     requireAuth(Scenario.create)

@@ -45,15 +45,20 @@
     });
   };
 
-  const addCollaborator = () => {
-    const username = prompt('username');
-    if (!username) {
+  const addCollaborator = async () => {
+    const name = prompt('username');
+    if (!name || name.length < 3 || name.length > 15) {
+      return;
+    }
+    const users = await User.search(name);
+    const user = users[0];
+    if (!user || user === User.name) {
       return;
     }
     Editor.update({
       addScenarioCollaborator: {
         id: data.id!,
-        value: username.trim(),
+        value: user,
       },
     });
   };
