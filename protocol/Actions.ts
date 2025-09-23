@@ -19,6 +19,9 @@ const getMessageResponse = (nodes: Node[], id: string, child: number) => {
 export const ProcessAction = (nodes: Node[], action: Action) => {
   switch (action.type) {
     case 'create':
+      if (action.create!.scenario) {
+        throw new Error("Can't create an scenario node");
+      }
       nodes.push(action.create!);
       break;
     case 'remove': {

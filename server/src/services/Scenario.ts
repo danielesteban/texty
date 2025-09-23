@@ -25,7 +25,7 @@ const loadScenario = (id: string) => (
         throw notFound();
       }
       const data = Protocol.decode(scenario.nodes.buffer);
-      const scenarioNode = data.nodes.find(({ id }) => id === 'scenario');
+      const scenarioNode = data.nodes.find(({ scenario }) => !!scenario);
       if (!scenarioNode) {
         throw new Error("Couldn't find the scenario node");
       }
@@ -40,7 +40,7 @@ const loadScenario = (id: string) => (
 
 const saveScenario = async (id: string, data: Protocol) => {
   const scenario: IScenario = Protocol.toObject(data, { defaults: true });
-  const scenarioNode = scenario.nodes?.find(({ id }) => id === 'scenario');
+  const scenarioNode = scenario.nodes?.find(({ scenario }) => !!scenario);
   if (!scenarioNode) {
     throw new Error("Couldn't find the scenario node");
   }
@@ -225,7 +225,8 @@ class Editor {
     if (ws.readyState !== ws.OPEN) {
       return;
     }
-    const scenarioNode = this.data.nodes.find(({ id }) => id === 'scenario');
+    const { data, peers } = this;
+    const scenarioNode = data.nodes.find(({ scenario }) => !!scenario);
     if (!scenarioNode) {
       throw new Error("Couldn't find the scenario node");
     }
@@ -236,7 +237,6 @@ class Editor {
       ws.terminate();
       return;
     }
-    const { data, peers } = this;
     const peer = ws as unknown as typeof this.peers[0];
     peer.id = uuid();
     peer.isAlive = true;
@@ -250,8 +250,15 @@ class Editor {
       if (!(buffer instanceof Buffer)) {
         return;
       }
-      const action = Action.decode(new Uint8Array(buffer));
-      ProcessAction(data.nodes, new Action(action));
+      try {
+        const action = Action.decode(new Uint8Array(buffer));
+        ProcessAction(data.nodes, new Action(action));
+      } catch (err) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error(err);
+        }
+        return;
+      }
       peers.forEach((p) => {
         if (p.id === peer.id) {
           return;
