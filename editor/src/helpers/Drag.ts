@@ -33,7 +33,10 @@ export const Drag = ({ onStart, onMove, onEnd, onSecondary }: {
     initialPointer.x = pointer.x = e.clientX;
     initialPointer.y = pointer.y = e.clientY;
     e.stopPropagation();
-    if (['BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'].includes((e.target as HTMLDivElement).tagName)) {
+    if (
+      ['BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'].includes((e.target as HTMLDivElement).tagName)
+      || (e.target as HTMLDivElement).hasAttribute('data-no-drag')
+    ) {
       return;
     }
     if (e.button !== 0) {

@@ -17,7 +17,8 @@ build-client:
       paths:
         - game/.pnpm-store
   variables:
-    SERVER: https://fms.gatunes.com/server/
+    CLIENT: https://texty.gatunes.com/
+    SERVER: https://texty.gatunes.com/server/
   before_script:
     - corepack enable
     - corepack prepare pnpm@latest-10 --activate
@@ -105,7 +106,7 @@ deploy:
       when: always
   environment:
     name: production
-    url: https://fms.gatunes.com
+    url: https://texty.gatunes.com
   variables:
     GIT_STRATEGY: none
   script:

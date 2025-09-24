@@ -1,5 +1,5 @@
 {
-  "name": "fms-server",
+  "name": "texty-server",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,7 +16,7 @@
     "express-ws": "^5.0.2",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.18.1",
+    "mongoose": "^8.18.2",
     "nocache": "^4.0.0",
     "uuid": "^13.0.0",
     "validator": "^13.15.15",
@@ -33,7 +33,7 @@
     "@types/ws": "^8.18.1",
     "rollup-plugin-node-externals": "^8.1.1",
     "typescript": "^5.9.2",
-    "vite": "^7.1.6",
+    "vite": "^7.1.7",
     "vite-node": "^3.2.4"
   },
   "pnpm": {

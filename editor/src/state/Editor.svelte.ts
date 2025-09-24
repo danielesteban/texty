@@ -1,6 +1,7 @@
-import { Action, Language, ResolutionStatus, Scenario, type IAction, type INode as Node, type IScenario } from '../../../protocol/messages.js';
+import { Action, Language, Scenario, type IAction, type INode as Node, type IScenario } from '../../../protocol/messages.js';
 import { ProcessAction } from '../../../protocol/Actions';
-export { Language, ResolutionStatus, type Node };
+export { Language, type Node };
+import { Lang } from 'state/Lang.svelte';
 import { User } from 'state/User.svelte';
 import { connect, request } from 'state/Server';
 
@@ -35,14 +36,16 @@ export const Editor = {
   set editingNode(value) { editingNode = value },
   get hasLoaded() { return hasLoaded },
   get isLoading() { return isLoading },
+  get id() { return id },
   get nodes() { return nodes },
   get origin() { return origin },
   get wire() { return wire },
   set wire(value) { wire = value },
   async create() {
     const scenario = await request({
-      method: 'POST',
+      body: { language: Language[Lang.locale.toUpperCase() as keyof typeof Language] },
       endpoint: `scenario`,
+      method: 'POST',
       session: User.session!,
     });
     location.hash = `/${scenario}`;

@@ -1,24 +1,33 @@
 <script lang="ts">
   import Connector from 'components/Connector.svelte';
-  import { Editor, ResolutionStatus, type Node } from 'state/Editor.svelte';
+  import { Editor, type Node } from 'state/Editor.svelte';
   import { Lang } from 'state/Lang.svelte';
 
   let { data }: {
     data: Node;
   } = $props();
 
-  const updateStatus = (value: ResolutionStatus) => {
+  const updateMessage = (value: string) => {
     Editor.update({
-      setResolutionStatus: {
+      setResolutionMessage: {
         id: data.id!,
         value,
       },
     });
   };
 
-  const updateText = (value: string) => {
+  const updateResult = (value: string) => {
     Editor.update({
-      setResolutionText: {
+      setResolutionResult: {
+        id: data.id!,
+        value,
+      },
+    });
+  };
+
+  const updateStatus = (value: boolean) => {
+    Editor.update({
+      setResolutionStatus: {
         id: data.id!,
         value,
       },
@@ -34,22 +43,49 @@
   <!-- svelte-ignore a11y_label_has_associated_control -->
   <label>{Lang.current.status}</label>
 </div>
-<select
-  value={data.resolution!.status!}
-  onchange={({ currentTarget: { value } }) => updateStatus(parseInt(value, 10))}
->
-  <option value={ResolutionStatus.BLOCKED}>{Lang.current.blocked}</option>
-  <option value={ResolutionStatus.DATE}>{Lang.current.date}</option>
-  <option value={ResolutionStatus.FRIENDZONED}>{Lang.current.friendzoned}</option>
-  <option value={ResolutionStatus.REJECTED}>{Lang.current.rejected}</option>
-</select>
+<div class="options">
+  <label class="option" data-no-drag>
+    <input
+      name="status"
+      type="radio"
+      checked={data.resolution!.status}
+      value={true}
+      onchange={({ currentTarget: { checked } }) => updateStatus(checked)}
+    />
+    <div>
+      {Lang.current.success}
+    </div>
+  </label>
+  <label class="option" data-no-drag>
+    <input
+      name="status"
+      type="radio"
+      checked={!data.resolution!.status}
+      value={false}
+      onchange={({ currentTarget: { checked } }) => updateStatus(!checked)}
+    />
+    <div>
+      {Lang.current.failure}
+    </div>
+  </label>
+</div>
+<!-- svelte-ignore a11y_label_has_associated_control -->
+<label>{Lang.current.result}</label>
+<div class="text">
+  <input
+    spellcheck={false}
+    type="text"
+    value={data.resolution!.result!}
+    oninput={({ currentTarget: { value } }) => updateResult(value)}
+  />
+</div>
 <!-- svelte-ignore a11y_label_has_associated_control -->
 <label>{Lang.current.message}</label>
 <div class="text">
   <textarea
     spellcheck={false}
-    value={data.resolution!.text!}
-    oninput={({ currentTarget: { value } }) => updateText(value)}
+    value={data.resolution!.message!}
+    oninput={({ currentTarget: { value } }) => updateMessage(value)}
   ></textarea>
 </div>
 
@@ -60,5 +96,24 @@
 
   .text > textarea {
     height: 4.5rem;
+  }
+
+  .options {
+    display: grid;
+    gap: 0.25rem;
+    justify-items: flex-start;
+  }
+  
+  .option {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem;
+    color: #eee;
+    cursor: pointer;
+  }
+
+  .option > div {
+    padding-right: 0.5rem;
+    pointer-events: none;
   }
 </style>

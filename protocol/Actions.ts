@@ -58,11 +58,14 @@ export const ProcessAction = (nodes: Node[], action: Action) => {
     case 'setMessageReponseNext':
       getMessageResponse(nodes, action.setMessageReponseNext!.id!, action.setMessageReponseNext!.child!).next = action.setMessageReponseNext!.value!;
       break;
+    case 'setResolutionMessage':
+      getNode(nodes, action.setResolutionMessage!.id!).resolution!.message = action.setResolutionMessage!.value!;
+      break;
+    case 'setResolutionResult':
+      getNode(nodes, action.setResolutionResult!.id!).resolution!.result = action.setResolutionResult!.value!;
+      break;
     case 'setResolutionStatus':
       getNode(nodes, action.setResolutionStatus!.id!).resolution!.status = action.setResolutionStatus!.value!;
-      break;
-    case 'setResolutionText':
-      getNode(nodes, action.setResolutionText!.id!).resolution!.text = action.setResolutionText!.value!;
       break;
     case 'addScenarioCollaborator': {
       const node = getNode(nodes, action.addScenarioCollaborator!.id!).scenario!;
@@ -95,6 +98,9 @@ export const ProcessAction = (nodes: Node[], action: Action) => {
       break;
     case 'setScenarioPhoto':
       getNode(nodes, action.setScenarioPhoto!.id!).scenario!.photo = action.setScenarioPhoto!.value!;
+      break;
+    case 'setScenarioPrivate':
+      getNode(nodes, action.setScenarioPrivate!.id!).scenario!.private = action.setScenarioPrivate!.value!;
       break;
     case 'setScenarioStart':
       getNode(nodes, action.setScenarioStart!.id!).scenario!.start = action.setScenarioStart!.value!;

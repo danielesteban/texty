@@ -1,7 +1,5 @@
 import { Audio } from 'state/Audio';
-import { ResolutionStatus, Scenario, type INode as Node, type INodeMessageResponses, type IScenario } from '../../../protocol/messages.js';
-
-export { ResolutionStatus };
+import { Scenario, type INode as Node, type INodeMessageResponses, type IScenario } from '../../../protocol/messages.js';
 
 let hasLoaded = $state(false);
 let isLoading = $state(false);
@@ -9,7 +7,7 @@ let isTyping = $state(false);
 
 let nodes = $state<Node[]>([]);
 let messages = $state<{ text: string; type: 'incoming' | 'outgoing' }[]>([]);
-let resolution = $state<ResolutionStatus | null>(null);
+let resolution = $state<{ result: string; status: boolean } | null>(null);
 let responses = $state<INodeMessageResponses[]>([]);
 let scenario = $state<Node>({});
 let selected = $state(-1);
@@ -39,12 +37,12 @@ const loadNode = async (id: string) => {
     return;
   }
   if (node.resolution) {
-    if (node.resolution.text) {
-      await typeMessage(node.resolution.text!);
+    if (node.resolution.message) {
+      await typeMessage(node.resolution.message!);
     }
-    resolution = node.resolution.status!;
+    resolution = { result: node.resolution.result!, status: node.resolution.status! };
     responses = [];
-    Audio.play(resolution === ResolutionStatus.DATE ? 'success' : 'failure');
+    Audio.play(resolution.status ? 'success' : 'failure');
     return;
   }
 };

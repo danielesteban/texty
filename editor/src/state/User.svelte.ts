@@ -6,7 +6,7 @@ type UserData = {
 };
 
 let initial: UserData | null = null;
-const key = 'fms::user';
+const key = 'texty::user';
 const stored = localStorage.getItem(key) || null;
 if (stored) {
   try {

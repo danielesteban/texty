@@ -10,6 +10,7 @@ interface Scenario {
   name: string;
   nodes: Buffer;
   photo: Buffer;
+  private: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -49,6 +50,11 @@ const ScenarioSchema = new Schema<Scenario>({
   photo: {
     type: Buffer,
     required: true,
+  },
+  private: {
+    type: Boolean,
+    required: true,
+    index: true,
   },
   createdAt: { type: Date, index: -1 },
   updatedAt: Date,

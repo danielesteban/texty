@@ -11,8 +11,9 @@ message NodeMessage {
 }
 
 message NodeResolution {
-  ResolutionStatus status = 1;
-  string text = 2;
+  string message = 1;
+  string result = 2;
+  bool status = 3;
 }
 
 message NodeScenario {
@@ -21,8 +22,9 @@ message NodeScenario {
   Language language = 3;
   string name = 4;
   bytes photo = 5;
-  optional string start = 6;
-  repeated string collaborators = 7;
+  bool private = 6;
+  optional string start = 7;
+  repeated string collaborators = 8;
 }
 
 message NodePosition {
@@ -72,9 +74,9 @@ message SetString {
   string value = 1;
 }
 
-message SetResolutionStatus {
+message SetBool {
   string id = 0;
-  ResolutionStatus value = 1;
+  bool value = 1;
 }
 
 message Action {
@@ -85,26 +87,21 @@ message Action {
     SetString setMessageText = 3;
     SetChildString setMessageReponseText = 4;
     SetChildString setMessageReponseNext = 5;
-    SetResolutionStatus setResolutionStatus = 6;
-    SetString setResolutionText = 7;
-    SetString addScenarioCollaborator = 8;
-    SetString removeScenarioCollaborator = 9;
-    SetString setScenarioDescription = 10;
-    SetLanguage setScenarioLanguage = 11;
-    SetString setScenarioName = 12;
-    SetBytes setScenarioPhoto = 13;
-    SetString setScenarioStart = 14;
+    SetString setResolutionMessage = 6;
+    SetString setResolutionResult = 7;
+    SetBool setResolutionStatus = 8;
+    SetString addScenarioCollaborator = 9;
+    SetString removeScenarioCollaborator = 10;
+    SetString setScenarioDescription = 11;
+    SetLanguage setScenarioLanguage = 12;
+    SetString setScenarioName = 13;
+    SetBytes setScenarioPhoto = 14;
+    SetBool setScenarioPrivate = 15;
+    SetString setScenarioStart = 16;
   }
 }
 
 enum Language {
   EN = 0;
   ES = 1;
-}
-
-enum ResolutionStatus {
-  BLOCKED = 0;
-  DATE = 1;
-  FRIENDZONED = 2;
-  REJECTED = 3;
 }

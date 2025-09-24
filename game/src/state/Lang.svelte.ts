@@ -1,20 +1,12 @@
 const en = {
-  blocked: "You've been blocked!",
-  date: "You've got a date!",
-  friendzoned: "You've been friendzoned!",
   isTyping: '{name} is typing...',
-  rejected: "You've been rejected!",
   selectScenario: 'Select a scenario',
   tryAgain: 'Try again',
   tryAnother: 'Try another scenario',
 };
 
 const es = {
-  blocked: 'Te han bloqueado!',
-  date: 'Has conseguido una cita!',
-  friendzoned: 'Te han friendzoneado!',
   isTyping: '{name} está escribiendo...',
-  rejected: 'Has sido rechazado!',
   selectScenario: 'Elige un escenario',
   tryAgain: 'Inténtalo de nuevo',
   tryAnother: 'Prueba otro escenario',
@@ -22,7 +14,7 @@ const es = {
 
 const locales = { en, es };
 
-const key = 'fms::locale';
+const key = 'texty::locale';
 
 let locale = $state((() => {
   let locale: keyof typeof locales = 'en';

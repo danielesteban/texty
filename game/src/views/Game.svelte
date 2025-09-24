@@ -2,15 +2,8 @@
   import { tick } from 'svelte';
   import Image from 'components/Image.svelte';
   import Text from 'components/Text.svelte';
-  import { Game, ResolutionStatus } from 'state/Game.svelte';
+  import { Game } from 'state/Game.svelte';
   import { Lang } from 'state/Lang.svelte';
-
-  const resolutions: { [key: number]: keyof typeof Lang.current } = {
-    [ResolutionStatus.BLOCKED]: 'blocked',
-    [ResolutionStatus.DATE]: 'date',
-    [ResolutionStatus.FRIENDZONED]: 'friendzoned',
-    [ResolutionStatus.REJECTED]: 'rejected',
-  };
 
   let messages = $state<HTMLDivElement>(null!);
 
@@ -53,8 +46,8 @@
       </div>
     {/if}
     {#if Game.resolution !== null}
-      <div class="resolution" class:success={Game.resolution === ResolutionStatus.DATE}>
-        {Lang.current[resolutions[Game.resolution]]}
+      <div class="resolution" class:success={Game.resolution.status}>
+        {Game.resolution.result}
       </div>
     {/if}
   </div>

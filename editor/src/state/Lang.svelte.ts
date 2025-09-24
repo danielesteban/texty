@@ -1,22 +1,24 @@
 const en = {
-  blocked: 'Blocked',
   collaborators: 'Collaborators',
   confirmPassword: 'Confirm password',
   createScenario: 'Create a new scenario',
   creator: 'Creator',
-  date: 'Date',
   description: 'Description',
   emptyCollaborators: 'You haven\'t added any collaborators yet.',
   emptyScenarios: 'You haven\'t created any scenarios yet.',
-  friendzoned: 'Friendzoned',
+  failure: 'Failure',
   language: 'Language',
   message: 'Message',
   name: 'Name',
   password: 'Password',
+  preview: 'Preview scenario',
+  privacy: 'Privacy',
+  private: 'Private',
+  public: 'Public',
   responses: 'Responses',
-  rejected: 'Rejected',
   remove: 'Remove',
   resolution: 'Resolution',
+  result: 'Result',
   selectScenario: 'Select a scenario',
   signup: 'Create an account',
   signupAlternative: 'Already have an account?',
@@ -25,28 +27,31 @@ const en = {
   signinAlternative: 'Need an account?',
   signinError: 'Error signing in',
   status: 'Status',
+  success: 'Success',
   username: 'Username',
 };
 
 const es = {
-  blocked: 'Bloqueado',
   collaborators: 'Colaboradores',
   confirmPassword: 'Confirmar contraseña',
   createScenario: 'Crear nuevo escenario',
   creator: 'Creador',
-  date: 'Cita',
   description: 'Descripción',
   emptyCollaborators: 'Aún no has añadido ningún colaborador.',
   emptyScenarios: 'Aún no has creado ningún escenario.',
-  friendzoned: 'Friendzoned',
+  failure: 'Fracaso',
   language: 'Idioma',
   message: 'Mensaje',
   name: 'Nombre',
   password: 'Contraseña',
+  preview: 'Previsualizar escenario',
+  privacy: 'Privacidad',
+  private: 'Privado',
+  public: 'Público',
   responses: 'Respuestas',
-  rejected: 'Rechazado',
   remove: 'Eliminar',
   resolution: 'Resolución',
+  result: 'Resultado',
   selectScenario: 'Elige un escenario',
   signup: 'Crear una cuenta',
   signupAlternative: 'Ya tienes una cuenta?',
@@ -55,12 +60,13 @@ const es = {
   signinAlternative: 'Necesitas una cuenta?',
   signinError: 'Error iniciando sesión',
   status: 'Estado',
+  success: 'Éxito',
   username: 'Usuario',
 };
 
 const locales = { en, es };
 
-const key = 'fms::locale';
+const key = 'texty::locale';
 
 let locale = $state((() => {
   let locale: keyof typeof locales = 'en';
@@ -85,6 +91,7 @@ let current = $derived(locales[locale]);
 
 export const Lang = {
   get current() { return current },
+  get locale() { return locale },
   set locale(value: keyof typeof locales) {
     locale = value;
     localStorage.setItem(key, locale);

@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => ({
     outDir: '../game/dist/editor',
   },
   define: {
+    __CLIENT__: JSON.stringify(process.env.CLIENT || 'http://localhost:8080/'),
     __SERVER__: JSON.stringify(process.env.SERVER || 'http://localhost:8082/'),
   },
   esbuild: mode === 'production' ? {

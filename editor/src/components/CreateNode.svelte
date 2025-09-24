@@ -1,7 +1,7 @@
 <script lang="ts">
   import { v4 as uuid } from 'uuid';
   import ContextMenu from 'components/ContextMenu.svelte';
-  import { Editor, ResolutionStatus, type Node } from 'state/Editor.svelte';
+  import { Editor, type Node } from 'state/Editor.svelte';
   import { Lang } from 'state/Lang.svelte';
 
   const createNode = (type: 'message' | 'resolution') => () => {
@@ -24,7 +24,9 @@
     }
     if (type === 'resolution') {
       node.resolution = {
-        status: ResolutionStatus.BLOCKED,
+        message: '',
+        result: '',
+        status: true,
       };
     }
     Editor.update({
