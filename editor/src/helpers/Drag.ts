@@ -4,6 +4,7 @@ export const Drag = ({ onStart, onMove, onEnd, onSecondary }: {
   onEnd?: (pointer: { x: number; y: number }, movement: { x: number; y: number }) => void,
   onSecondary?: (pointer: { x: number; y: number }) => void,
 }) => {
+  let hasMoved = false;
   const initialPointer = { x: 0, y: 0 };
   const movement = { x: 0, y: 0 };
   const pointer = { x: 0, y: 0 };
@@ -15,6 +16,12 @@ export const Drag = ({ onStart, onMove, onEnd, onSecondary }: {
   };
   const dragMove = (e: PointerEvent) => {
     computeMovement(e);
+    if (!hasMoved) {
+      if ((movement.x ** 2 + movement.y ** 2) < 16) {
+        return;
+      }
+      hasMoved = true;
+    }
     onMove(pointer, movement);
   };
   const dragEnd = (e: PointerEvent) => {
@@ -30,6 +37,7 @@ export const Drag = ({ onStart, onMove, onEnd, onSecondary }: {
     }
   };
   return (e: PointerEvent) => {
+    hasMoved = false;
     initialPointer.x = pointer.x = e.clientX;
     initialPointer.y = pointer.y = e.clientY;
     e.stopPropagation();

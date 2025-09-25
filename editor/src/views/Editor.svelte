@@ -1,16 +1,11 @@
 <script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
   import Connections from 'components/Connections.svelte';
   import CreateNode from 'components/CreateNode.svelte';
   import EditNode from 'components/EditNode.svelte';
   import Node from 'components/Node.svelte';
   import { Drag } from 'helpers/Drag';
   import { Editor } from 'state/Editor.svelte';
-
-  const onResize = () => {
-    Editor.origin.x = window.innerWidth * 0.5;
-    Editor.origin.y = window.innerHeight * 0.5;
-  };
-  onResize();
 
   const initialCamera = { x: 0, y: 0 };
   const panCameraStart = Drag({
@@ -38,6 +33,12 @@
     }
   };
 
+  const onResize = () => {
+    Editor.origin.x = window.innerWidth * 0.5;
+    Editor.origin.y = window.innerHeight * 0.5;
+  };
+  onResize();
+
   const minZoom = Math.log(1/8);
   const maxZoom = Math.log(1);
   const zoomRange = maxZoom - minZoom;
@@ -59,14 +60,34 @@
     Editor.camera.position.y = (Editor.camera.position.y * Editor.camera.zoom) + offset.y;
   };
 
-  $effect(() => {
+  const prevent = (e: Event) => e.preventDefault();
+
+  onMount(() => {
+    const nodes = document.querySelectorAll('.viewport .node');
+    const bounds = { min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } };
+    nodes.forEach((node) => {
+      const rect = node.getBoundingClientRect();
+      bounds.min.x = Math.min(bounds.min.x, rect.left);
+      bounds.min.y = Math.min(bounds.min.y, rect.top);
+      bounds.max.x = Math.max(bounds.max.x, rect.right);
+      bounds.max.y = Math.max(bounds.max.y, rect.bottom);
+    });
+    bounds.min = Editor.getWorldPosition(bounds.min);
+    bounds.max = Editor.getWorldPosition(bounds.max);
+    const zoom = Math.min(Math.max(Math.min(
+      ((window.innerWidth - 64) / (bounds.max.x - bounds.min.x)),
+      ((window.innerHeight - 64) / (bounds.max.y - bounds.min.y))
+    ), 1/8), 1);
+    Editor.camera.zoom = zoom;
+    Editor.camera.position.x = (bounds.min.x + bounds.max.x) * -0.5 * zoom;
+    Editor.camera.position.y = (bounds.min.y + bounds.max.y) * -0.5 * zoom;
+
     window.addEventListener('wheel', onWheel, { passive: false });
-    return () => {
-      window.removeEventListener('wheel', onWheel);
-    };
   });
 
-  const prevent = (e: Event) => e.preventDefault();
+  onDestroy(() => {
+    window.removeEventListener('wheel', onWheel);
+  });
 </script>
 
 <svelte:window
