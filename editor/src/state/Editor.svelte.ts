@@ -5,7 +5,7 @@ import { Lang } from 'state/Lang.svelte';
 import { User } from 'state/User.svelte';
 import { connect, request } from 'state/Server';
 
-let camera = $state({ x: 0, y: 0 });
+let camera = $state({ position: { x: 0, y: 0 }, zoom: 1 });
 let creatingNode = $state<{ x: number; y: number } | null>(null);
 let editingNode = $state<{ id: string; x: number; y: number } | null>(null);
 let hasLoaded = $state(false);
@@ -94,7 +94,7 @@ export const Editor = {
     socket.send(Action.encode(action).finish());
   },
   unload() {
-    camera = { x: 0, y: 0 };
+    camera = { position: { x: 0, y: 0 }, zoom: 1 };
     creatingNode = null;
     editingNode = null;
     hasLoaded = false;
@@ -110,8 +110,8 @@ export const Editor = {
   },
   getWorldPosition(position: { x: number; y: number }) {
     return {
-      x: position.x - origin.x - Editor.camera.x,
-      y: position.y - origin.y - Editor.camera.y,
+      x: (position.x - origin.x - camera.position.x) / camera.zoom,
+      y: (position.y - origin.y - camera.position.y) / camera.zoom,
     };
   },
 };

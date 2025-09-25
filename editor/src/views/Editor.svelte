@@ -15,18 +15,55 @@
   const initialCamera = { x: 0, y: 0 };
   const panCameraStart = Drag({
     onStart() {
-      initialCamera.x = Editor.camera.x;
-      initialCamera.y = Editor.camera.y;
+      initialCamera.x = Editor.camera.position.x;
+      initialCamera.y = Editor.camera.position.y;
       Editor.creatingNode = null;
       Editor.editingNode = null;
     },
     onMove(_, movement) {
-      Editor.camera.x = initialCamera.x + movement.x;
-      Editor.camera.y = initialCamera.y + movement.y;
+      Editor.camera.position.x = initialCamera.x + movement.x;
+      Editor.camera.position.y = initialCamera.y + movement.y;
     },
     onSecondary(pointer) {
       Editor.creatingNode = Editor.getWorldPosition(pointer);
     },
+  });
+
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (
+      (e.ctrlKey || e.metaKey)
+      && (e.key === '+' || e.key === '=' || e.key === '-' || e.key === '_')
+    ) {
+      e.preventDefault();
+    }
+  };
+
+  const minZoom = Math.log(1/8);
+  const maxZoom = Math.log(1);
+  const zoomRange = maxZoom - minZoom;
+  const zoomFromLog = (value: number) => Math.exp(minZoom + value * zoomRange);
+  const zoomToLog = (value: number) => (Math.log(value) - minZoom) / zoomRange;
+  const offset = { x: 0, y: 0 };
+
+  const onWheel = (e: WheelEvent) => {
+    if (e.ctrlKey) {
+      e.preventDefault();
+    }
+    const step = Math.sign(e.deltaY) * -0.1;
+    offset.x = e.clientX - Editor.origin.x;
+    offset.y = e.clientY - Editor.origin.y;
+    Editor.camera.position.x = (Editor.camera.position.x - offset.x) / Editor.camera.zoom;
+    Editor.camera.position.y = (Editor.camera.position.y - offset.y) / Editor.camera.zoom;
+    Editor.camera.zoom = zoomFromLog(Math.min(Math.max(zoomToLog(Editor.camera.zoom) + step, 0), 1));
+    Editor.camera.position.x = (Editor.camera.position.x * Editor.camera.zoom) + offset.x;
+    Editor.camera.position.y = (Editor.camera.position.y * Editor.camera.zoom) + offset.y;
+  };
+
+  $effect(() => {
+    window.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      window.removeEventListener('wheel', onWheel);
+    };
   });
 
   const prevent = (e: Event) => e.preventDefault();
@@ -34,6 +71,7 @@
 
 <svelte:window
   oncontextmenu={prevent}
+  onkeydown={onKeyDown}
   onresize={onResize}
   ondragenter={prevent}
   ondragover={prevent}
@@ -47,7 +85,7 @@
   <Connections />
   <div
     class="viewport"
-    style="left: {Editor.origin.x + Editor.camera.x}px; top: {Editor.origin.y + Editor.camera.y}px"
+    style="left: {Editor.origin.x + Editor.camera.position.x}px; top: {Editor.origin.y + Editor.camera.position.y}px; transform: scale({Editor.camera.zoom})"
   >
     {#each Editor.nodes as data (data.id)}
       <Node {data} />

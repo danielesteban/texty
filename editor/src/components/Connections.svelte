@@ -39,7 +39,8 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     const ctx = canvas.getContext('2d')!;
-    ctx.translate(Editor.origin.x + Editor.camera.x, Editor.origin.y + Editor.camera.y);
+    ctx.translate(Editor.origin.x + Editor.camera.position.x, Editor.origin.y + Editor.camera.position.y);
+    ctx.scale(Editor.camera.zoom, Editor.camera.zoom);
     Editor.nodes.forEach((node) => {
       if (node.message) {
         node.message!.responses!.forEach(({ next }, i) => {

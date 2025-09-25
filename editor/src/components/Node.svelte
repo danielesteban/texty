@@ -22,8 +22,8 @@
         setPosition: {
           id: data.id!,
           value: {
-            x: initialPosition.x + movement.x,
-            y: initialPosition.y + movement.y,
+            x: initialPosition.x + movement.x / Editor.camera.zoom,
+            y: initialPosition.y + movement.y / Editor.camera.zoom,
           },
         },
       });
@@ -68,13 +68,12 @@
       for (const connector of connectors) {
         const id = connector.getAttribute('data-wiring-id')!;
         const { x, y, width, height } = connector.getBoundingClientRect();
-        outputs.push({ id, position: Editor.getWorldPosition({ x: x + width * 0.5 - 0.5, y: y + height * 0.5 - 0.5 }) });
+        outputs.push({ id, position: Editor.getWorldPosition({ x: x + width * 0.5, y: y + height * 0.5 }) });
       }
     },
     onMove(_, movement) {
-      // @dani @hack: This won't work when/if I add zoom/transform to the camera!!
-      Editor.wire!.position.x = initialPosition.x + movement.x;
-      Editor.wire!.position.y = initialPosition.y + movement.y;
+      Editor.wire!.position.x = initialPosition.x + movement.x / Editor.camera.zoom;
+      Editor.wire!.position.y = initialPosition.y + movement.y / Editor.camera.zoom;
       output = outputs.find(({ position }) => (
         ((position.x - Editor.wire!.position.x) ** 2 + (position.y - Editor.wire!.position.y) ** 2) < 576
       )) || null;
