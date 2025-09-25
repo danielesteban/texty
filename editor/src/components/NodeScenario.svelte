@@ -38,11 +38,31 @@
     });
   };
 
-  const updatePhoto = async (e: DragEvent) => {
-    if (!e.dataTransfer) {
+  const browsePhoto = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.oncancel = () => {
+      input.oncancel = null;
+      input.onchange = null;
+    };
+    input.onchange = () => {
+      if (!input.files?.length) {
+        return;
+      }
+      updatePhoto(input.files[0]);
+    };
+    input.click();
+  };
+
+  const dropPhoto = (e: DragEvent) => {
+    if (!e.dataTransfer?.files.length) {
       return;
     }
-    const [file] = e.dataTransfer.files;
+    updatePhoto(e.dataTransfer.files[0]);
+  };
+
+  const updatePhoto = async (file: File) => {
     if (!file || file.type.substring(0, 6) !== 'image/') {
       return;
     }
@@ -92,8 +112,15 @@
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="photo" ondrop={updatePhoto}>
+<div class="photo" ondrop={dropPhoto}>
   <div class="image">
+    <!-- svelte-ignore a11y_consider_explicit_label -->
+    <button onclick={browsePhoto}>
+      <svg width="2rem" height="2rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 15C3 17.8284 3 19.2426 3.87868 20.1213C4.75736 21 6.17157 21 9 21H15C17.8284 21 19.2426 21 20.1213 20.1213C21 19.2426 21 17.8284 21 15" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 16V3M12 3L16 7.375M12 3L8 7.375"  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
     <Image data={data.scenario!.photo!} />
   </div>
 </div>
@@ -221,8 +248,23 @@
     height: 8rem;
     border: 4px solid #222;
     border-radius: 8rem;
-    pointer-events: none;
     overflow: hidden;
+    position: relative;
+  }
+
+  .image > button {
+    display: none;
+    width: 8rem;
+    height: 8rem;
+    border: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.95;
+  }
+
+  .image:hover > button {
+    display: flex;
   }
 
   .options {
