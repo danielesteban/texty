@@ -50,7 +50,7 @@
     if (e.ctrlKey) {
       e.preventDefault();
     }
-    const step = Math.sign(e.deltaY) * -0.1;
+    const step = -e.deltaY / 1020;
     offset.x = e.clientX - Editor.origin.x;
     offset.y = e.clientY - Editor.origin.y;
     Editor.camera.position.x = (Editor.camera.position.x - offset.x) / Editor.camera.zoom;
