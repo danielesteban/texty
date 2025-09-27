@@ -58,6 +58,10 @@
   </div>
 </div>
 
+<div class="info">
+  <a href="https://dani.gatunes.com" rel="noopener noreferrer" target="_blank">dani@gatunes</a> © 2025
+</div>
+
 <style>
   .wrapper {
     height: 100%;
@@ -161,5 +165,12 @@
 
   .user:hover .dropdown {
     display: grid;
+  }
+
+  .info {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    color: #999;
   }
 </style>
