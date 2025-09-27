@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Editor } from 'state/Editor.svelte';
   import { Lang } from 'state/Lang.svelte';
+  import { User } from 'state/User.svelte';
 
   let scenarios = $state<{ _id: string; name: string; description: string; }[]>([]);
 
@@ -37,6 +38,22 @@
       onclick={() => Editor.create()}
     >
       {Lang.current.createScenario}
+    </button>
+  </div>
+</div>
+
+<div class="user">
+  <button>
+    <div>
+      {User.name}
+    </div>
+    <svg width="1rem" height="1rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 10L12 14L8 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <div class="dropdown">
+    <button onclick={User.logout}>
+      {Lang.current.signout}
     </button>
   </div>
 </div>
@@ -103,5 +120,46 @@
 
   .description {
     color: #999;
+  }
+
+  .user {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .user > button {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    min-width: 134px;
+    gap: 1rem;
+    cursor: default;
+  }
+
+  .user > button > div {
+    display: grid;
+    justify-content: flex-start;
+  }
+
+  .user .dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100px;
+    background: #111;
+    border: 1px solid #000;
+    border-radius: 0 0 0.5rem 0.5rem;
+    padding: 1rem;
+    display: none;
+    align-content: flex-start;
+    gap: 0.5rem;
+  }
+
+  .user:hover > button {
+    border-radius: 0.25rem 0.25rem 0 0;
+  }
+
+  .user:hover .dropdown {
+    display: grid;
   }
 </style>

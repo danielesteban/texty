@@ -35,6 +35,19 @@
   </div>
 </div>
 
+<div class="editor">
+  <a href={__EDITOR__} rel="noopener noreferrer">
+    <button>
+      <svg width="1rem" height="1rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 12L12 12M12 12L17 12M12 12V7M12 12L12 17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div>
+        {Lang.current.create}
+      </div>
+    </button>
+  </a>
+</div>
+
 <style>
   .menu {
     background: #111;
@@ -81,5 +94,26 @@
 
   .description {
     color: #999;
+  }
+
+  .editor {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: none;
+  }
+
+  .editor > a {
+    text-decoration: none;
+  }
+
+  .editor > a > button {
+    gap: 0.25rem;
+  }
+
+  @media (min-width: 700px) {
+    .editor {
+      display: block;
+    }
   }
 </style>

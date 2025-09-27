@@ -1,4 +1,5 @@
 const en = {
+  create: 'Create your own scenario',
   isTyping: '{name} is typing...',
   selectScenario: 'Select a scenario',
   tryAgain: 'Try again',
@@ -6,6 +7,7 @@ const en = {
 };
 
 const es = {
+  create: 'Crea tu propio escenario',
   isTyping: '{name} está escribiendo...',
   selectScenario: 'Elige un escenario',
   tryAgain: 'Inténtalo de nuevo',

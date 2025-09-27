@@ -50,6 +50,9 @@ export const User = {
     });
     set(user);
   },
+  logout() {
+    set(null);
+  },
   async register(name: string, password: string) {
     const user = await request({
       body: { name, password },

@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(({ mode }) => ({
   define: {
+    __EDITOR__: JSON.stringify(process.env.EDITOR || 'http://localhost:8081/'),
     __SERVER__: JSON.stringify(process.env.SERVER || 'http://localhost:8082/'),
   },
   esbuild: mode === 'production' ? {

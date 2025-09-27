@@ -18,6 +18,7 @@ build-client:
         - game/.pnpm-store
   variables:
     CLIENT: https://texty.gatunes.com/
+    EDITOR: https://texty.gatunes.com/editor/
     SERVER: https://texty.gatunes.com/server/
   before_script:
     - corepack enable
