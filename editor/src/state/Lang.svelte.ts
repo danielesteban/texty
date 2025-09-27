@@ -1,4 +1,5 @@
 const en = {
+  addCollaborator: 'Add collaborator',
   collaborators: 'Collaborators',
   confirmPassword: 'Confirm password',
   createScenario: 'Create a new scenario',
@@ -33,6 +34,7 @@ const en = {
 };
 
 const es = {
+  addCollaborator: 'Agregar colaborador',
   collaborators: 'Colaboradores',
   confirmPassword: 'Confirmar contraseña',
   createScenario: 'Crear nuevo escenario',

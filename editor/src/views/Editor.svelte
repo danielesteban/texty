@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
+  import AddCollaborator from 'components/AddCollaborator.svelte';
   import Connections from 'components/Connections.svelte';
   import CreateNode from 'components/CreateNode.svelte';
   import EditNode from 'components/EditNode.svelte';
@@ -115,6 +116,8 @@
     <EditNode />
   </div>
 </div>
+
+<AddCollaborator />
 
 <style>
   .editor {

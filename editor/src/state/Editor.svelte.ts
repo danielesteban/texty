@@ -5,6 +5,7 @@ import { Lang } from 'state/Lang.svelte';
 import { User } from 'state/User.svelte';
 import { connect, request } from 'state/Server';
 
+let addingCollaborator = $state<string | null>(null);
 let camera = $state({ position: { x: 0, y: 0 }, zoom: 1 });
 let creatingNode = $state<{ x: number; y: number } | null>(null);
 let editingNode = $state<{ id: string; x: number; y: number } | null>(null);
@@ -29,6 +30,8 @@ const onDisconnect = (e: CloseEvent) => {
 };
 
 export const Editor = {
+  get addingCollaborator() { return addingCollaborator },
+  set addingCollaborator(value) { addingCollaborator = value },
   get camera() { return camera },
   get creatingNode() { return creatingNode },
   set creatingNode(value) { creatingNode = value },
@@ -94,6 +97,7 @@ export const Editor = {
     socket.send(Action.encode(action).finish());
   },
   unload() {
+    addingCollaborator = null;
     camera = { position: { x: 0, y: 0 }, zoom: 1 };
     creatingNode = null;
     editingNode = null;

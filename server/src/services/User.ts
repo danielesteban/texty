@@ -65,10 +65,10 @@ export const search = [
     .trim()
     .isLength({ min: 3, max: 15 }),
   checkValidationResult,
-  (req: Request, res: Response, next: NextFunction) => {
+  (req: AuthorizedRequest, res: Response, next: NextFunction) => {
     const { name } = matchedData<{ name: string }>(req);
     User
-      .find({ name: { $regex: `^${name}`, $options: 'i' } })
+      .find({ _id: { $ne: req.user._id }, name: { $regex: `^${name}`, $options: 'i' } })
       .select('-_id name')
       .lean()
       .then((users) => {
