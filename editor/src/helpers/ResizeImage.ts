@@ -34,7 +34,7 @@ export const ResizeImage = (blob: Blob, target: { x: number; y: number }) => {
         reader.addEventListener('error', reject);
         reader.addEventListener('load', () => resolve(new Uint8Array(reader.result as ArrayBuffer)));
         reader.readAsArrayBuffer(resized);
-      }, 'image/jpeg', 1);
+      });
     });
     image.src = url;
   })

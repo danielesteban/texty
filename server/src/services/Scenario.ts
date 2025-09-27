@@ -2,6 +2,7 @@ import { badRequest, notFound } from '@hapi/boom';
 import { type NextFunction, type Request, type Response } from 'express';
 import { body, matchedData, param } from 'express-validator';
 import { type Types as MongooseTypes } from 'mongoose';
+import sharp from 'sharp';
 import { v4 as uuid } from 'uuid';
 import validator from 'validator';
 import { type WebSocket } from 'ws';
@@ -11,7 +12,7 @@ import { Scenario, User, type UserDocument } from 'models';
 import { ProcessAction } from '../../../protocol/Actions';
 import { Action, Language, Scenario as Protocol, type IScenario } from '../../../protocol/messages.js';
 
-const defaultName: { [key in Language]: string } = {
+const defaultName = {
   [Language.EN]: 'New Scenario',
   [Language.ES]: 'Nuevo Escenario',
 };
@@ -96,7 +97,7 @@ export const create = [
       creator: req.user._id,
       description: '',
       language,
-      name: defaultName[language],
+      name: language in defaultName ? defaultName[language as keyof typeof defaultName] : defaultName[Language.EN],
       nodes: Buffer.from(Protocol.encode(new Protocol({
         nodes: [
           {
@@ -262,12 +263,18 @@ class Editor {
         peers.splice(index, 1);
       }
     });
-    peer.on('message', (buffer) => {
+    peer.on('message', async (buffer) => {
       if (!(buffer instanceof Buffer)) {
         return;
       }
       try {
         const action = Action.decode(new Uint8Array(buffer));
+        if (action.type === 'setScenarioPhoto') {
+          action.setScenarioPhoto!.value! = await sharp(action.setScenarioPhoto!.value!)
+            .resize(128, 128)
+            .jpeg({ quality: 90 })
+            .toBuffer();
+        }
         ProcessAction(data.nodes, action);
       } catch (err) {
         if (process.env.NODE_ENV === 'development') {
