@@ -5,6 +5,12 @@
 
   let username = $state('');
 
+  $effect(() => {
+    if (Editor.addingCollaborator) {
+      username = '';
+    }
+  });
+
   const addCollaborator = async (e: SubmitEvent) => {
     e.preventDefault();
     const users = await User.search(username);
@@ -27,12 +33,6 @@
       Editor.addingCollaborator = null;
     }
   };
-
-  $effect(() => {
-    if (Editor.addingCollaborator) {
-      username = '';
-    }
-  });
 </script>
 
 {#if Editor.addingCollaborator}
