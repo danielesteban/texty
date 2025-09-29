@@ -24,10 +24,10 @@
     ctx.beginPath();
     ctx.moveTo(from.x, from.y);
     ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, to.x, to.y);
-    ctx.lineWidth = 6;
+    ctx.lineWidth = 5;
     ctx.strokeStyle = '#99e';
     ctx.stroke();
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3;
     ctx.strokeStyle = '#339';
     ctx.stroke();
   };
