@@ -3,10 +3,12 @@
   import { Lang } from 'state/Lang.svelte';
   import { User } from 'state/User.svelte';
 
+  let input = $state<HTMLInputElement>(null!);
   let username = $state('');
 
   $effect(() => {
     if (Editor.addingCollaborator) {
+      input.focus();
       username = '';
     }
   });
@@ -43,8 +45,9 @@
         <label>{Lang.current.username}</label>
         <div>
           <input
-            spellcheck={false}
             type="text"
+            spellcheck={false}
+            bind:this={input}
             bind:value={username}
           />
         </div>
