@@ -73,8 +73,8 @@
 <label>{Lang.current.result}</label>
 <div class="text">
   <input
-    spellcheck={false}
     type="text"
+    spellcheck={false}
     value={data.resolution!.result!}
     oninput={({ currentTarget: { value } }) => updateResult(value)}
   />

@@ -126,11 +126,13 @@
 </div>
 <!-- svelte-ignore a11y_label_has_associated_control -->
 <label>{Lang.current.description}</label>
-<div class="description">
-  <textarea
+<div>
+  <input
+    type="text"
+    spellcheck={false}
     value={data.scenario!.description}
     oninput={({ currentTarget: { value } }) => updateDescription(value)}
-  ></textarea>
+  />
 </div>
 <!-- svelte-ignore a11y_label_has_associated_control -->
 <label>{Lang.current.language}</label>
@@ -329,10 +331,6 @@
 <style>
   .connection {
     position: relative;
-  }
-
-  .description > textarea {
-    height: 4.5rem;
   }
 
   .photo {
