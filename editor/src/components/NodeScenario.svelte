@@ -259,7 +259,7 @@
 <div class="options">
   <label class="option" data-no-drag>
     <input
-      name="private"
+      name="{data.id!}-private"
       type="radio"
       checked={!data.scenario!.private}
       value={false}
@@ -271,7 +271,7 @@
   </label>
   <label class="option" data-no-drag>
     <input
-      name="private"
+      name="{data.id!}-private"
       type="radio"
       checked={data.scenario!.private}
       value={true}

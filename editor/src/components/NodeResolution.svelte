@@ -46,7 +46,7 @@
 <div class="options">
   <label class="option" data-no-drag>
     <input
-      name="status"
+      name="{data.id!}-status"
       type="radio"
       checked={data.resolution!.status}
       value={true}
@@ -58,7 +58,7 @@
   </label>
   <label class="option" data-no-drag>
     <input
-      name="status"
+      name="{data.id!}-status"
       type="radio"
       checked={!data.resolution!.status}
       value={false}
