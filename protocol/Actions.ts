@@ -1,4 +1,4 @@
-import { Action, type INode as Node } from './messages.js';
+import { Action, type IAction, type INode as Node } from './messages.js';
 
 const getNode = (nodes: Node[], id: string) => {
   const node = nodes.find((node) => node.id === id);
@@ -22,7 +22,7 @@ export const ProcessAction = (nodes: Node[], action: Action) => {
       if (action.create!.scenario) {
         throw new Error("Can't create an scenario node");
       }
-      nodes.push(action.create!);
+      nodes.push((Action.toObject(action, { defaults: true }) as IAction).create!);
       break;
     case 'remove': {
       const node = nodes.findIndex((node) => node.id === action.remove! && !node.scenario);
