@@ -17,9 +17,9 @@ build-client:
       paths:
         - game/.pnpm-store
   variables:
-    CLIENT: https://texty.gatunes.com/
-    EDITOR: https://texty.gatunes.com/editor/
-    SERVER: https://texty.gatunes.com/server/
+    CLIENT: __CLIENT__
+    EDITOR: __EDITOR__
+    SERVER: __SERVER__
   before_script:
     - corepack enable
     - corepack prepare pnpm@latest-10 --activate
