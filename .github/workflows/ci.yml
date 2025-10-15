@@ -32,13 +32,15 @@ jobs:
           node-version: 22
           cache: 'pnpm'
       - name: Install
-        run: pnpm -C protocol install
-        run: pnpm -C game install
-        run: pnpm -C editor install
+        run: |
+          pnpm -C protocol install
+          pnpm -C game install
+          pnpm -C editor install
       - name: Build
-        run: pnpm -C protocol build
-        run: pnpm -C game build
-        run: pnpm -C editor build
+        run: |
+          pnpm -C protocol build
+          pnpm -C game build
+          pnpm -C editor build
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -69,11 +71,13 @@ jobs:
           node-version: 22
           cache: 'pnpm'
       - name: Install
-        run: pnpm -C protocol install
-        run: pnpm -C server install
+        run: |
+          pnpm -C protocol install
+          pnpm -C server install
       - name: Build
-        run: pnpm -C protocol build
-        run: pnpm -C server build
+        run: |
+          pnpm -C protocol build
+          pnpm -C server build
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
