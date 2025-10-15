@@ -55,6 +55,8 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}/client
       - uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILD_SUMMARY: false
         with:
           context: game
           push: true
@@ -95,6 +97,8 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}/server
       - uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILD_SUMMARY: false
         with:
           context: server
           push: true
