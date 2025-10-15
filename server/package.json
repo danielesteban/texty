@@ -16,7 +16,7 @@
     "express-ws": "^5.0.2",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.18.2",
+    "mongoose": "^8.19.1",
     "nocache": "^4.0.0",
     "sharp": "^0.34.4",
     "uuid": "^13.0.0",
@@ -30,11 +30,11 @@
     "@types/express-ws": "^3.0.5",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
-    "@types/node": "^24.5.2",
+    "@types/node": "^24.7.2",
     "@types/ws": "^8.18.1",
     "rollup-plugin-node-externals": "^8.1.1",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.7",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.10",
     "vite-node": "^3.2.4"
   },
   "pnpm": {
