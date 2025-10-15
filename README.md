@@ -40,16 +40,16 @@ services:
     image: ghcr.io/danielesteban/texty/client:master
     restart: always
     environment:
-     - CLIENT=https://texty.gatunes.com/
-     - EDITOR=https://texty.gatunes.com/editor/
-     - SERVER=https://texty.gatunes.com/server/
+     - CLIENT=https://texty.example.com/
+     - EDITOR=https://texty.example.com/editor/
+     - SERVER=https://texty.example.com/server/
     ports:
      - "127.0.0.1:8080:80"
   server:
     image: ghcr.io/danielesteban/texty/server:master
     restart: always
     environment:
-     - ALLOWED_ORIGINS=https://texty.gatunes.com
+     - ALLOWED_ORIGINS=https://texty.example.com
      - MONGO_URI=mongodb://mongo/texty
      - SESSION_SECRET=randomsessionsecret
     ports:
